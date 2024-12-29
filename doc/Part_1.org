@@ -1,0 +1,293 @@
+<<c1d2d735-3392-4810-bf2c-203c24eb9856>>
+* Using Jupyter Lab
+:PROPERTIES:
+:CUSTOM_ID: using-jupyter-lab
+:END:
+
+<<effc2c4b-4920-408b-8d8c-f237edb8e53d>>
+** Install and launch jupyter lab
+:PROPERTIES:
+:CUSTOM_ID: install-and-launch-jupyter-lab
+:END:
+*** create and activate your environment
+:PROPERTIES:
+:CUSTOM_ID: create-and-activate-your-environment
+:END:
+if you have a conda installation
+
+#+begin_src sh
+conda create -n myenv python=3.12
+conda activate myenv
+#+end_src
+
+on windows using the py launcher
+
+#+begin_src cmd
+py -3.12 -m venv myenv
+myenv\Scripts\activate
+#+end_src
+
+*** launch installation
+:PROPERTIES:
+:CUSTOM_ID: launch-installation
+:END:
+with conda
+
+#+begin_src sh
+conda install jupyterlab
+#+end_src
+
+with pip
+
+#+begin_src sh
+pip install jupyterlab
+#+end_src
+
+*** launch application
+:PROPERTIES:
+:CUSTOM_ID: launch-application
+:END:
+#+begin_src sh
+jupyter lab
+#+end_src
+
+*** create a notebook
+:PROPERTIES:
+:CUSTOM_ID: create-a-notebook
+:END:
+when starting application your browser will show the launcher page which
+includes some icons; clicking the python icon on the top left corner
+will open a new notebook
+
+<<e001f631-0622-48b2-85fc-6cef23eb3e27>>
+** Writing and executing code
+:PROPERTIES:
+:CUSTOM_ID: writing-and-executing-code
+:END:
+Each Jupyter notebook is composed of cells; in each cell you can type
+some python code e.g.
+
+#+begin_src jupyter-python
+name = "Marco"
+f"my name is {name}"
+#+end_src
+
+<<48302117-7909-451d-9aaf-0d34549a1105>>
+*** executing a cell
+:PROPERTIES:
+:CUSTOM_ID: executing-a-cell
+:END:
+you can either click on the right arrow icon in the top of the notebook
+or press shift-enter in a cell you are writing into
+
+the last expression in a cell is returned as a result; if any function
+prints some text this appears as well
+
+#+begin_src jupyter-python
+print("this is a text before the result of an expression")
+# this is the last expression in the cell
+2 ** 3 + 2
+#+end_src
+
+<<c99ee038-c3c7-4216-8993-9694095da462>>
+*** what does it happen behind the scenes?
+:PROPERTIES:
+:CUSTOM_ID: what-does-it-happen-behind-the-scenes
+:END:
+a python interpreter is activated per each individual open notebook;
+each time a cell is executed the text inside the cell is evaluated and
+the result is returned as well as any output on the *stdout* or *stderr*
+streams
+
+<<421ae2ce-1083-490e-b45a-c23cf69f81dd>>
+** Magic commands
+:PROPERTIES:
+:CUSTOM_ID: magic-commands
+:END:
+Jupyter extends python with some commands aimed to simplify common
+tasks; these commands starts with one or two percent symbols; execute
+the following cell to read an introduction to magic commands and their
+functionality. Let's just list a few action you can do
+
+- change the current process directory
+- time the execution of a command
+- save the content of a cell in a file
+- execute a command in your operating system (an external command)
+
+#+begin_src jupyter-python
+%magic
+#+end_src
+
+<<e68c0b68-2523-4413-965c-8f854c29e154>>
+*** Executing external process
+:PROPERTIES:
+:CUSTOM_ID: executing-external-process
+:END:
+Magic commands starting with a =!= are equivalent to commands sent to
+your operating system shell; their standard output and standard error
+streams contents are collected as the cell output e.g. =! git status=
+will execute =git= in the current working directory (which is the one
+where the notebook is created) and the result is returned
+
+<<c4e52df0-799a-4d2b-942c-7b46d27e8cb6>>
+*** Timing a cell
+:PROPERTIES:
+:CUSTOM_ID: timing-a-cell
+:END:
+using the magic command =%time= followed by some python code will
+measure the execution time of the cell
+
+=%timeit= will perform multiple executions of the code in order to
+gather a statistic for execution time
+
+<<88c7b74b-f40d-4fab-a180-4f47893a77ee>>
+*** Using python Help
+:PROPERTIES:
+:CUSTOM_ID: using-python-help
+:END:
+by writing a question mark before the last expression of a cell you can
+read the python built-in manual
+
+#+begin_src jupyter-python
+?sum
+#+end_src
+
+<<e51ffa88-12ba-4388-b72a-2b53d561ad77>>
+*** Adding equations
+:PROPERTIES:
+:CUSTOM_ID: adding-equations
+:END:
+the magic command =%%latex= allows to add equations to your text
+
+#+begin_src jupyter-python
+%%latex
+\begin{equation}
+Var = \frac{
+\sum_{i \in 1..n}{(\mu - x_i)^2}
+}{n}
+\end{equation}
+\begin{equation}
+Var =  E[(E[X] - X)^2]
+\end{equation}
+\begin{equation}
+Var =  E[X]^2 + E[X^2] - 2E[XE[X]]
+\end{equation}
+\begin{equation}
+Var = E[X^2] - E[X]^2
+\end{equation}
+\begin{equation}
+\sigma = \sqrt{Var}
+\end{equation}
+#+end_src
+
+#+begin_example
+<IPython.core.display.Latex object>
+#+end_example
+
+<<3be0c45c-1040-4329-944b-fd094777a36a>>
+** Load and save files and notebook
+:PROPERTIES:
+:CUSTOM_ID: load-and-save-files-and-notebook
+:END:
+A jupyter app is a web application and can run on a remote server; you
+can download your notebooks as well as other data files available and
+load other notebooks or files
+
+*** saving your current notebook
+:PROPERTIES:
+:CUSTOM_ID: saving-your-current-notebook
+:END:
+Every now and then the notebook saves itself; you can make sure it is
+saved by clicking the floppy disk icon in the top bar
+
+Each notebook can be renamed either
+
+1. from the left pane
+   1. selecting the folder tab
+   2. and right clicking on the name in the file list on the left
+   3. and selecting rename; or
+2. from an open notebook
+   1. right clicking on the name in the tab
+   2. and selecting rename
+
+*** upload files and notebook
+:PROPERTIES:
+:CUSTOM_ID: upload-files-and-notebook
+:END:
+to load notebooks or any file:
+
+1. choose the folder tab
+2. click on the up arrow on the left
+3. select your file from your local disk
+
+*** download a file or a notebook
+:PROPERTIES:
+:CUSTOM_ID: download-a-file-or-a-notebook
+:END:
+1. choose the folder tab
+2. navigate to the directory containing the file(s)
+3. right click on the file name
+4. select download
+
+<<7ccf2da9-a5e9-4a67-8c38-87231bdda226>>
+** Adding formatted text
+:PROPERTIES:
+:CUSTOM_ID: adding-formatted-text
+:END:
+Jupyter allows you to write formatted text using MarkDown.
+
+This allows you to create titles /italic text/ *bold text* links e.g.
+[[https://www.markdownguide.org/cheat-sheet/][cheat sheet]]
+
+You can create tables as well
+
+| species | name    | birth |
+|---------+---------+-------|
+| cat     | Matisse | 2021  |
+| dog     | Nuvola  | 2010  |
+
+also formulas can be embedded
+
+\(\int_R{e^{-x^2}dx} = \sqrt{\pi}\)
+
+<<62f51cef-8c9f-4e38-b15d-12709c4ec1a8>>
+** Exercise
+:PROPERTIES:
+:CUSTOM_ID: exercise
+:END:
+1. save and rename this notebook
+2. complete the following function with an iteration which prints all
+   fibonacci numbers up to the n-th (see the fibonacci definition below)
+
+#+begin_src jupyter-python
+%%latex
+\begin{equation}
+n \in N
+\end{equation}
+\begin{equation}
+fib(0) = fib(1) = 1 
+\end{equation}
+\begin{equation}
+n >= 2 \implies fib(n) = fib(n - 1) + fib(n - 2)
+\end{equation}
+#+end_src
+
+#+begin_example
+<IPython.core.display.Latex object>
+#+end_example
+
+#+begin_src jupyter-python
+def fibonacci(n):
+    # complete the function here
+#+end_src
+
+<<bfa03d94-f9c7-4133-bd0f-a5c3f8174a34>>
+1. execute the function and compare your results with your friends
+
+#+begin_src jupyter-python
+fibonacci(5)
+#+end_src
+
+<<8b1ec212-b50b-450a-8150-3301e7b1f41a>>
+1. download this notebook and exchange with a friend
+2. load your friend's notebook and upload it here
