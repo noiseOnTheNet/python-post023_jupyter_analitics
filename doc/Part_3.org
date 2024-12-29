@@ -1,3 +1,13 @@
+#+BLOG: noise on the net
+#+POSTID: 564
+#+ORG2BLOG:
+#+DATE: [2024-12-29 dom 21:57]
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
+#+CATEGORY: Language learning
+#+TAGS: Python
+#+DESCRIPTION:
+#+TITLE: Exploratory Data Analysis Intro
+
 <<174e59f6-c1c2-4009-bb09-b101c3f9e389>>
 * Introduction to Exploratory Data Analysis with Matplotlib and Seaborn
 :PROPERTIES:
@@ -8,7 +18,7 @@
 Execute the following cell only if you need to install the seaborn
 library
 
-#+begin_src jupyter-python
+#+begin_src python
 !pip install --upgrade matplotlib seaborn
 #+end_src
 
@@ -22,7 +32,7 @@ The following libraries are the foundation tools:
 - *numpy* is a numeric calculation library providing fast c arrays and
   scientific functions
 
-#+begin_src jupyter-python
+#+begin_src python
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -43,7 +53,7 @@ which is a relation
 Note: the titanic dataset was downloaded at the beginning of Part 2; in
 case you missing it execute the code at the beginning of the lesson
 
-#+begin_src jupyter-python
+#+begin_src python
 titanic = pd.read_csv("datasets/titanic.csv")
 titanic.head()
 #+end_src
@@ -72,7 +82,7 @@ titanic.head()
 the =describe()= method shows basic statistics for conrinuous and
 discrete variables
 
-#+begin_src jupyter-python
+#+begin_src python
 titanic.describe(include="all")
 #+end_src
 
@@ -122,7 +132,7 @@ each column has a data type, as =csv= do not carry any type information,
 this is inferred when loading; other binary data format also include a
 data type. The datas type of a column is saved in the =.dtype= attribute
 
-#+begin_src jupyter-python
+#+begin_src python
 pclass = titanic.Pclass
 pclass.dtype
 #+end_src
@@ -135,7 +145,7 @@ we know this column represents the class of the ticket so we expect it
 to have a finite number of actual values: we can check it with the
 =.unique()= method
 
-#+begin_src jupyter-python
+#+begin_src python
 pclass.unique()
 #+end_src
 
@@ -146,7 +156,7 @@ pclass.unique()
 we see this is a discrete valued columns so we can transform its type
 with the =.astype()= method
 
-#+begin_src jupyter-python
+#+begin_src python
 pclass = pclass.astype('category')
 pclass.dtype
 #+end_src
@@ -157,7 +167,7 @@ pclass.dtype
 <<686b3eb7-08a6-45ca-b3f5-c67224df2207>>
 Now the statistics are represented differently for pClass
 
-#+begin_src jupyter-python
+#+begin_src python
 titanic["pClass"] = pclass
 titanic.describe(include="all")
 #+end_src
@@ -192,7 +202,7 @@ titanic.describe(include="all")
 If we know in advance about the type of a column we can give some hint
 to the csv reader
 
-#+begin_src jupyter-python
+#+begin_src python
 titanic = pd.read_csv(
     "datasets/titanic.csv",
     dtype={
@@ -211,7 +221,7 @@ titanic = pd.read_csv(
 Whern we have a category series we can list all of the possible values
 using the =.cat.categories= attribute
 
-#+begin_src jupyter-python
+#+begin_src python
 pclass.cat.categories
 #+end_src
 
@@ -221,7 +231,7 @@ pclass.cat.categories
 <<2a25f666-b716-44ab-bc4e-3013ed24fa8a>>
 the =sns.countplot()= function show a bar plot of categorical values
 
-#+begin_src jupyter-python
+#+begin_src python
 sns.countplot(pclass)
 #+end_src
 
@@ -239,7 +249,7 @@ sns.countplot(pclass)
 <<af09454e-d7ce-4d3a-8434-4d7ecba9ecce>>
 this dataframe collects pollutant density in California
 
-#+begin_src jupyter-python
+#+begin_src python
 california = pd.read_csv("california_pb_2023.csv")
 california.describe(include="all")
 #+end_src
@@ -322,7 +332,7 @@ california.describe(include="all")
 <<1616b9b6-febf-4e2a-b35e-82f36a409812>>
 =sns.histplot= shows an histogram
 
-#+begin_src jupyter-python
+#+begin_src python
 sns.histplot(california,x="Daily Mean Pb Concentration")
 #+end_src
 
@@ -335,7 +345,7 @@ sns.histplot(california,x="Daily Mean Pb Concentration")
 This distribution looks like a lognormal distribution, let's show a
 cumulative distribution and plot it with a logaritmic x axis
 
-#+begin_src jupyter-python
+#+begin_src python
 sorted_pb = np.sort(california["Daily Mean Pb Concentration"])
 prob_pb = (np.arange(len(sorted_pb)) + 1)/len(sorted_pb)
 ax=sns.lineplot(x=sorted_pb, y=prob_pb)
@@ -349,7 +359,7 @@ This looks nice so we can check by fitting a quantile plot
 
 First we try with a normal quantile, we expect some queues
 
-#+begin_src jupyter-python
+#+begin_src python
 from scipy import stats
 stats.probplot(california["Daily Mean Pb Concentration"], plot=sns.mpl.pyplot)
 #+end_src
@@ -367,7 +377,7 @@ stats.probplot(california["Daily Mean Pb Concentration"], plot=sns.mpl.pyplot)
 <<d9f56ab0-3602-46d7-b29e-a4ea1e3a3425>>
 We can fit it with a different distribution, so we choose a lognormal
 
-#+begin_src jupyter-python
+#+begin_src python
 stats.probplot(california["Daily Mean Pb Concentration"], plot=sns.mpl.pyplot,dist=stats.distributions.lognorm(s=1))
 #+end_src
 
@@ -394,13 +404,13 @@ interaction, the =pd.crosstab()= function provides a way to create a
 contingency table i.e. a table which counts all combination of the
 considered factors
 
-#+begin_src jupyter-python
+#+begin_src python
 titanic['survived'] = titanic.Survived.astype('category')
 titanic['sex'] = titanic.Sex.astype('category')
 titanic['pclass'] = titanic.Pclass.astype('category')
 #+end_src
 
-#+begin_src jupyter-python
+#+begin_src python
 ct = pd.crosstab(titanic['survived'],columns=[titanic['sex'],titanic['pclass']])
 ct
 #+end_src
@@ -416,7 +426,7 @@ ct
 the =.plot.bar()= method provides a quick way to display this
 information as grouped bar plot
 
-#+begin_src jupyter-python
+#+begin_src python
 ct.plot.bar()
 #+end_src
 
@@ -425,7 +435,7 @@ ct.plot.bar()
 
 [[file:images/1d24d9251539adaf31f212d0a90dae8f08c90c42.png]]
 
-#+begin_src jupyter-python
+#+begin_src python
 ct.plot.bar(stacked=True)
 #+end_src
 
@@ -442,7 +452,7 @@ ct.plot.bar(stacked=True)
 the =iris= dataset is a collection of measurements of this flower's
 features (sepal and petal length and width) across different varieties.
 
-#+begin_src jupyter-python
+#+begin_src python
 iris = pd.read_csv("iris.csv")
 iris.head()
 #+end_src
@@ -463,7 +473,7 @@ iris.head()
 the simplest way to look at the interaction between two of these
 features is the scatter plot
 
-#+begin_src jupyter-python
+#+begin_src python
 sns.scatterplot(iris,x="sepal_length",y="sepal_width")
 #+end_src
 
@@ -481,7 +491,7 @@ the same can be done with all the features in a large simmetric matrix.
 
 In the diagonal are plotted histograms of the corresponding feature
 
-#+begin_src jupyter-python
+#+begin_src python
 sns.pairplot(iris)
 #+end_src
 
@@ -518,7 +528,7 @@ category
 - if the calculated value is chosen all samples which are farther from
   the mean are plotted as dot and may be interpreted as outliers
 
-#+begin_src jupyter-python
+#+begin_src python
 sns.boxplot(titanic,x="pclass",y="Age")
 #+end_src
 
@@ -534,7 +544,7 @@ distribution calculated with kernel smoothing.
 This provides more visual information than box plot but may be
 effectively used only when the number of groups is limited
 
-#+begin_src jupyter-python
+#+begin_src python
 sns.violinplot(titanic,x="pclass",y="Age")
 #+end_src
 
@@ -552,7 +562,7 @@ the scatter matrix can show groups from a single category using colors
 
 The seaborn version also shows kernel density distributons
 
-#+begin_src jupyter-python
+#+begin_src python
 sns.pairplot(iris,hue="variety")
 #+end_src
 
@@ -572,7 +582,7 @@ define a bidimensional grid.
 A plotting function can be applied on each subset represented in a given
 cell grid
 
-#+begin_src jupyter-python
+#+begin_src python
 g = sns.FacetGrid(titanic, col="sex", row='pclass')
 g.map(sns.histplot, "Age")
 #+end_src
@@ -586,5 +596,19 @@ g.map(sns.histplot, "Age")
 interestingly this representation shows the different age distribution
 as a function of the gender and the class of passengers
 
-#+begin_src jupyter-python
+#+begin_src python
 #+end_src
+
+# images/04c5f7ee20b7c943d81ff65e17f36eaf85fead2b.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/04c5f7ee20b7c943d81ff65e17f36eaf85fead2b.png
+# images/1e179c2227cfbdf703d241d0bb9385b826510526.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/1e179c2227cfbdf703d241d0bb9385b826510526.png
+# images/98650be7328261cabcd95fd83a1dc52ecb101acd.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/98650be7328261cabcd95fd83a1dc52ecb101acd.png
+# images/07b8d558d22557e09c33cc108a169772832e1531.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/07b8d558d22557e09c33cc108a169772832e1531.png
+# images/9cfc294ea181926dd8c3f3a056d94b07f48e2909.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/9cfc294ea181926dd8c3f3a056d94b07f48e2909.png
+# images/1d24d9251539adaf31f212d0a90dae8f08c90c42.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/1d24d9251539adaf31f212d0a90dae8f08c90c42.png
+# images/6a211b5060db8a1a6052f4e092b775e7791ac988.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/6a211b5060db8a1a6052f4e092b775e7791ac988.png
+# images/4c419a0ca12a4e26ba41985fdfac20af73b56257.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/4c419a0ca12a4e26ba41985fdfac20af73b56257.png
+# images/40e4e0e7a7353c852c5d91fb906062bb585cae19.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/40e4e0e7a7353c852c5d91fb906062bb585cae19.png
+# images/ec07ee2fc870feb9b837a8e21ba0fac0069235ca.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/ec07ee2fc870feb9b837a8e21ba0fac0069235ca.png
+# images/ffdee419bb3798d2d38b21cf42559025e5b59f8e.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/ffdee419bb3798d2d38b21cf42559025e5b59f8e.png
+# images/d434a97f3c99b61d058aae62790fa73ea533b7b4.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/d434a97f3c99b61d058aae62790fa73ea533b7b4.png
+# images/8a2ea5e8dd1009fa17e54573f5038253f725ff8d.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/8a2ea5e8dd1009fa17e54573f5038253f725ff8d.png
