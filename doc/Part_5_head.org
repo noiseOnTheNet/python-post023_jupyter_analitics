@@ -1,0 +1,9 @@
+#+BLOG: noise on the net
+#+POSTID: 572
+#+ORG2BLOG:
+#+DATE: [2024-12-29 dom 21:57]
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
+#+CATEGORY: Language learning
+#+TAGS: Python
+#+DESCRIPTION:
+#+TITLE: Correlations and Linear Models
