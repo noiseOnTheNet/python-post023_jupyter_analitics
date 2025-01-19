@@ -1,5 +1,5 @@
 * Data sources used in this repository
-** Temperature data in Italy
+** Temperature data in Rome and Bari 1951 - 2009
 - https://www.ecad.eu/
   - file:doc/BARI.zip
   - file:doc/ROMA.zip
@@ -16,3 +16,8 @@
 ** Unemployment in Italy
 - https://www.istat.it
   - file:doc/unemployment_it.csv
+** Resource consumption in Milan
+- https://www.dati.gov.it/
+  - file:doc/ds523_consumoacquaenergia.csv
+** Iris
+- file:doc/iris.csv
