@@ -1,10 +1,9 @@
-* Data sources
+* Data sources used in this repository
 ** Temperature data in Italy
 - https://www.ecad.eu/
   - file:doc/BARI.zip
   - file:doc/ROMA.zip
 - https://guides.library.lincoln.ac.uk/mash/datasets
-** Brain Data
 ** Economics
 - https://www.worldbank.org/en/publication/gfdr/data/global-financial-development-database
   - file:doc/20220909-global-financial-development-database.xlsx
@@ -14,3 +13,6 @@
 - https://www.statsmodels.org/stable/datasets
 ** UCLA crime dataset
 - https://stats.idre.ucla.edu/wp-content/uploads/2016/02/crime.txt
+** Unemployment in Italy
+- https://www.istat.it
+  - file:doc/unemployment_it.csv
