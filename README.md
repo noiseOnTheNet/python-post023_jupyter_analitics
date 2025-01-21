@@ -24,12 +24,12 @@ All original material is licensed under GNU GPLv3
 
 -   <doc/>
     -   in this directory you will find 6 notebooks
-        -   Part 1: <doc/Part_1.ipynb> Introduction to Jupyter
-        -   Part 2: <doc/Part_2.ipynb> Introduction to Pandas
-        -   Part 3: <doc/Part_3.ipynb> Introduction to Exploratory Data Anslysis
-        -   Part 4: <doc/Part_4.ipynb> Turning a Notebook into a Script
-        -   Part 5: <doc/Part_5.ipynb> Introduction to Linear Regression
-        -   Part 6: <doc/Part_6.ipynb> Introduction to Statistical Tests
+        -   Part 1: doc/Part_1.ipynb Introduction to Jupyter
+        -   Part 2: doc/Part_2.ipynb Introduction to Pandas
+        -   Part 3: doc/Part_3.ipynb Introduction to Exploratory Data Anslysis
+        -   Part 4: doc/Part_4.ipynb Turning a Notebook into a Script
+        -   Part 5: doc/Part_5.ipynb Introduction to Linear Regression
+        -   Part 6: doc/Part_6.ipynb Introduction to Statistical Tests
 
 -   <pyproject.toml> contains the dependency libraries
 
