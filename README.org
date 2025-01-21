@@ -4,8 +4,7 @@ held on December 2024 in Federico II univerity, Neaples (Italy)
 
 All original material is licensed under GNU GPLv3
 
-- file:doc/
-  - in this directory you will find 6 notebooks
+  - in this directory you will find 6 notebooks file:doc/.
     - Part 1: file:doc/Part_1.ipynb Introduction to Jupyter
     - Part 2: file:doc/Part_2.ipynb Introduction to Pandas
     - Part 3: file:doc/Part_3.ipynb Introduction to Exploratory Data Anslysis
@@ -13,7 +12,7 @@ All original material is licensed under GNU GPLv3
     - Part 5: file:doc/Part_5.ipynb Introduction to Linear Regression
     - Part 6: file:doc/Part_6.ipynb Introduction to Statistical Tests
 
-- file:pyproject.toml contains the dependency libraries
+  - file:pyproject.toml contains the dependency libraries
 
 * Data sources used in this repository
 ** Temperature data in Rome and Bari 1951 - 2009

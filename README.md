@@ -1,19 +1,19 @@
 
 # Table of Contents
 
-1.  [What does this repository contain?](#org0b6bcf2)
-2.  [Data sources used in this repository](#orgab4f82a)
-    1.  [Temperature data in Rome and Bari 1951 - 2009](#orgaefa3f6)
-    2.  [Economics](#orgc697b1b)
-    3.  [Titanic and Languages datasets](#org288a500)
-    4.  [Statsmodels package data](#org9bf7133)
-    5.  [UCLA crime dataset](#org2a7ce11)
-    6.  [Unemployment in Italy](#orgcb622cd)
-    7.  [Resource consumption in Milan](#orgb69acdc)
-    8.  [Iris](#org9e653fa)
+1.  [What does this repository contain?](#org3f6c9a3)
+2.  [Data sources used in this repository](#org3877e7e)
+    1.  [Temperature data in Rome and Bari 1951 - 2009](#orgae6a07c)
+    2.  [Economics](#org27090d7)
+    3.  [Titanic and Languages datasets](#org4cf0ddf)
+    4.  [Statsmodels package data](#orgaa0f493)
+    5.  [UCLA crime dataset](#orge356e2b)
+    6.  [Unemployment in Italy](#org170835c)
+    7.  [Resource consumption in Milan](#org0ffe1c8)
+    8.  [Iris](#org857dd7d)
 
 
-<a id="org0b6bcf2"></a>
+<a id="org3f6c9a3"></a>
 
 # What does this repository contain?
 
@@ -22,24 +22,23 @@ held on December 2024 in Federico II univerity, Neaples (Italy)
 
 All original material is licensed under GNU GPLv3
 
--   <doc/>
-    -   in this directory you will find 6 notebooks
-        -   Part 1: doc/Part_1.ipynb Introduction to Jupyter
-        -   Part 2: doc/Part_2.ipynb Introduction to Pandas
-        -   Part 3: doc/Part_3.ipynb Introduction to Exploratory Data Anslysis
-        -   Part 4: doc/Part_4.ipynb Turning a Notebook into a Script
-        -   Part 5: doc/Part_5.ipynb Introduction to Linear Regression
-        -   Part 6: doc/Part_6.ipynb Introduction to Statistical Tests
+-   in this directory you will find 6 notebooks <doc/.>
+    -   Part 1: <doc/Part_1.ipynb> Introduction to Jupyter
+    -   Part 2: <doc/Part_2.ipynb> Introduction to Pandas
+    -   Part 3: <doc/Part_3.ipynb> Introduction to Exploratory Data Anslysis
+    -   Part 4: <doc/Part_4.ipynb> Turning a Notebook into a Script
+    -   Part 5: <doc/Part_5.ipynb> Introduction to Linear Regression
+    -   Part 6: <doc/Part_6.ipynb> Introduction to Statistical Tests
 
 -   <pyproject.toml> contains the dependency libraries
 
 
-<a id="orgab4f82a"></a>
+<a id="org3877e7e"></a>
 
 # Data sources used in this repository
 
 
-<a id="orgaefa3f6"></a>
+<a id="orgae6a07c"></a>
 
 ## Temperature data in Rome and Bari 1951 - 2009
 
@@ -49,7 +48,7 @@ All original material is licensed under GNU GPLv3
 -   <https://guides.library.lincoln.ac.uk/mash/datasets>
 
 
-<a id="orgc697b1b"></a>
+<a id="org27090d7"></a>
 
 ## Economics
 
@@ -57,28 +56,28 @@ All original material is licensed under GNU GPLv3
     -   <doc/20220909-global-financial-development-database.xlsx>
 
 
-<a id="org288a500"></a>
+<a id="org4cf0ddf"></a>
 
 ## Titanic and Languages datasets
 
 -   <https://github.com/datasciencedojo/datasets.git>
 
 
-<a id="org9bf7133"></a>
+<a id="orgaa0f493"></a>
 
 ## Statsmodels package data
 
 -   <https://www.statsmodels.org/stable/datasets>
 
 
-<a id="org2a7ce11"></a>
+<a id="orge356e2b"></a>
 
 ## UCLA crime dataset
 
 -   <https://stats.idre.ucla.edu/wp-content/uploads/2016/02/crime.txt>
 
 
-<a id="orgcb622cd"></a>
+<a id="org170835c"></a>
 
 ## Unemployment in Italy
 
@@ -86,7 +85,7 @@ All original material is licensed under GNU GPLv3
     -   <doc/unemployment_it.csv>
 
 
-<a id="orgb69acdc"></a>
+<a id="org0ffe1c8"></a>
 
 ## Resource consumption in Milan
 
@@ -94,7 +93,7 @@ All original material is licensed under GNU GPLv3
     -   <doc/ds523_consumoacquaenergia.csv>
 
 
-<a id="org9e653fa"></a>
+<a id="org857dd7d"></a>
 
 ## Iris
 
