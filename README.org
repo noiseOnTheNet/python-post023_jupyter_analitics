@@ -1,3 +1,20 @@
+* What does this repository contain?
+in this repo you will find the material used in the introductory course
+held on December 2024 in Federico II univerity, Neaples (Italy)
+
+All original material is licensed under GNU GPLv3
+
+- file:doc/
+  - in this directory you will find 6 notebooks
+    - file:doc/Part_1.ipynb Introduction to Jupyter
+    - file:doc/Part_2.ipynb Introduction to Pandas
+    - file:doc/Part_3.ipynb Introduction to Exploratory Data Anslysis
+    - file:doc/Part_4.ipynb Turning a Notebook into a Script
+    - file:doc/Part_5.ipynb Introduction to Linear Regression
+    - file:doc/Part_6.ipynb Introduction to Statistical Tests
+
+- file:pyproject.toml contains the dependency libraries
+
 * Data sources used in this repository
 ** Temperature data in Rome and Bari 1951 - 2009
 - https://www.ecad.eu/
