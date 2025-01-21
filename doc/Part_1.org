@@ -1,9 +1,28 @@
+#+BLOG: noise on the net
+#+POSTID: 582
+#+DATE: [2025-01-20 lun 22:19]
+#+BLOG: noise on the net
+#+ORG2BLOG:
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
+#+CATEGORY: Language learning
+#+TAGS: Python
+#+DESCRIPTION: A trip starts with a single step. Let's start a space trip to Python Analytics Galaxy
+#+TITLE: A Trip to Jupyter Lab
+
+file:images/image_5608_2e-Jupiter.jpg
+This image of Jupiter was taken by NASA's Juno Orbiter on December 16 2018 and then processed by citizen scientist David Marriott. Image credit: NASA / JPL-Caltech / SwRI / MSSS / David Marriott.
+
+This is the first of 6 post where I share the content of the beginner's course I held for Federico II University undergraduate students in Neaples (Italy).
+
+The aim of this material is to offer an interactive environment where students can start their journey into this very large subject.
+
+I think that Jupyter lab offers a really conveninent environment, also improving the learning journey with fast visual feedbacks
+
 <<c1d2d735-3392-4810-bf2c-203c24eb9856>>
-* Using Jupyter Lab
+* A Trip to Jupyter Lab
 :PROPERTIES:
 :CUSTOM_ID: using-jupyter-lab
 :END:
-
 <<effc2c4b-4920-408b-8d8c-f237edb8e53d>>
 ** Install and launch jupyter lab
 :PROPERTIES:
@@ -67,7 +86,7 @@ will open a new notebook
 Each Jupyter notebook is composed of cells; in each cell you can type
 some python code e.g.
 
-#+begin_src jupyter-python
+#+begin_src python
 name = "Marco"
 f"my name is {name}"
 #+end_src
@@ -83,7 +102,7 @@ or press shift-enter in a cell you are writing into
 the last expression in a cell is returned as a result; if any function
 prints some text this appears as well
 
-#+begin_src jupyter-python
+#+begin_src python
 print("this is a text before the result of an expression")
 # this is the last expression in the cell
 2 ** 3 + 2
@@ -114,7 +133,7 @@ functionality. Let's just list a few action you can do
 - save the content of a cell in a file
 - execute a command in your operating system (an external command)
 
-#+begin_src jupyter-python
+#+begin_src python
 %magic
 #+end_src
 
@@ -148,41 +167,9 @@ gather a statistic for execution time
 by writing a question mark before the last expression of a cell you can
 read the python built-in manual
 
-#+begin_src jupyter-python
+#+begin_src python
 ?sum
 #+end_src
-
-<<e51ffa88-12ba-4388-b72a-2b53d561ad77>>
-*** Adding equations
-:PROPERTIES:
-:CUSTOM_ID: adding-equations
-:END:
-the magic command =%%latex= allows to add equations to your text
-
-#+begin_src jupyter-python
-%%latex
-\begin{equation}
-Var = \frac{
-\sum_{i \in 1..n}{(\mu - x_i)^2}
-}{n}
-\end{equation}
-\begin{equation}
-Var =  E[(E[X] - X)^2]
-\end{equation}
-\begin{equation}
-Var =  E[X]^2 + E[X^2] - 2E[XE[X]]
-\end{equation}
-\begin{equation}
-Var = E[X^2] - E[X]^2
-\end{equation}
-\begin{equation}
-\sigma = \sqrt{Var}
-\end{equation}
-#+end_src
-
-#+begin_example
-<IPython.core.display.Latex object>
-#+end_example
 
 <<3be0c45c-1040-4329-944b-fd094777a36a>>
 ** Load and save files and notebook
@@ -246,9 +233,21 @@ You can create tables as well
 | cat     | Matisse | 2021  |
 | dog     | Nuvola  | 2010  |
 
-also formulas can be embedded
-
+also formulas can be embedded in text
 \(\int_R{e^{-x^2}dx} = \sqrt{\pi}\)
+
+or as equations
+
+\begin{equation}
+ Var = \frac{ \sum_{i \in 1..n}{(\mu - x_i)^2} }{n}
+\end{equation}
+
+\begin{equation} Var = E[(E[X] - X)^2] \end{equation}
+\begin{equation} Var = E[X]^2 + E[X^2] - 2E[XE[X]] \end{equation}
+\begin{equation} Var = E[X^2] - E[X]^2 \end{equation}
+\begin{equation}
+\sigma = \sqrt{Var}
+\end{equation}
 
 <<62f51cef-8c9f-4e38-b15d-12709c4ec1a8>>
 ** Exercise
@@ -259,24 +258,17 @@ also formulas can be embedded
 2. complete the following function with an iteration which prints all
    fibonacci numbers up to the n-th (see the fibonacci definition below)
 
-#+begin_src jupyter-python
-%%latex
 \begin{equation}
-n \in N
+ n \in N
 \end{equation}
 \begin{equation}
-fib(0) = fib(1) = 1 
+fib(0) = fib(1) = 1
 \end{equation}
 \begin{equation}
 n >= 2 \implies fib(n) = fib(n - 1) + fib(n - 2)
 \end{equation}
-#+end_src
 
-#+begin_example
-<IPython.core.display.Latex object>
-#+end_example
-
-#+begin_src jupyter-python
+#+begin_src python
 def fibonacci(n):
     # complete the function here
 #+end_src
@@ -284,10 +276,12 @@ def fibonacci(n):
 <<bfa03d94-f9c7-4133-bd0f-a5c3f8174a34>>
 1. execute the function and compare your results with your friends
 
-#+begin_src jupyter-python
+#+begin_src python
 fibonacci(5)
 #+end_src
 
 <<8b1ec212-b50b-450a-8150-3301e7b1f41a>>
 1. download this notebook and exchange with a friend
 2. load your friend's notebook and upload it here
+
+# images/image_5608_2e-Jupiter.jpg https://noiseonthenet.space/noise/wp-content/uploads/2025/01/image_5608_2e-Jupiter.jpg

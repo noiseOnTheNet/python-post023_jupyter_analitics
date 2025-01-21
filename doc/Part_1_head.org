@@ -1,0 +1,23 @@
+#+BLOG: noise on the net
+#+POSTID: 582
+#+DATE: [2025-01-20 lun 22:19]
+#+BLOG: noise on the net
+#+ORG2BLOG:
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
+#+CATEGORY: Language learning
+#+TAGS: Python
+#+DESCRIPTION: Intro to Data Analytics in Python: Jupyter Lab
+<<c1d2d735-3392-4810-bf2c-203c24eb9856>>
+* A Trip to Jupyter Lab
+:PROPERTIES:
+:CUSTOM_ID: using-jupyter-lab
+:END:
+
+file:images/image_5608_2e-Jupiter.jpg
+This image of Jupiter was taken by Juno on December 16 and then processed by citizen scientist David Marriott. Image credit: NASA / JPL-Caltech / SwRI / MSSS / David Marriott.
+
+This is the first of 6 post where I share the content of the beginner's course I held for Neaple's University undergraduate students.
+
+The aim of this material is to offer an interactive environment where students can start their journey into this very large subject.
+
+I think that Jupyter lab offers a really conveninent environment, also improving the learning journey with fast visual feedbacks
