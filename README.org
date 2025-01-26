@@ -39,3 +39,4 @@ All original material is licensed under GNU GPLv3
 - [[file:doc/iris.csv][Iris]]
 * Blog Posts
 - https://noiseonthenet.space/noise/2025/01/a-trip-to-jupyter-lab/
+- https://noiseonthenet.space/noise/2025/01/meet-the-pandas/

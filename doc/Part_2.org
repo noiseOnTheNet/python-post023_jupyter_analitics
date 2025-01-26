@@ -14,7 +14,7 @@ We started our space trip to the galaxy of Python Analytics [[https://noiseonthe
 
 Now it's time to meet some of the most fascinating inhabitants: [[https://pandas.pydata.org/docs/][the pandas]]
 
-The code and jupyter notebook for the posts in this series are available in this [[https://github.com/noiseOnTheNet/python-post023_jupyter_analitics][repository]]
+The code, datasets and jupyter notebook for the posts in this series are available in this [[https://github.com/noiseOnTheNet/python-post023_jupyter_analitics][repository]]
 
 <<95761686-2e93-445b-b1ec-4ef918d92cf3>>
 * Using Pandas (basic introduction)
@@ -25,12 +25,9 @@ Pandas is a library to work with data using relational tables
 
 To prepare for this lesson execute the following cell
 
-#+begin_src python
+#+begin_src bash :noeval :exports code
 !git clone https://github.com/datasciencedojo/datasets.git
 #+end_src
-
-#+RESULTS:
-|   |
 
 #+begin_example
 Cloning into 'datasets'...
@@ -76,10 +73,6 @@ titanic.head()
 | 2 |           3 |        1 |      3 | Heikkinen, Miss. Laina                              | female | 26.0 |     0 |     0 | STON/O2. 3101282 |   7.925 |   nan | S        |
 | 3 |           4 |        1 |      1 | Futrelle, Mrs. Jacques Heath (Lily May Peel)        | female | 35.0 |     1 |     0 | 113803           |    53.1 |  C123 | S        |
 | 4 |           5 |        0 |      3 | Allen, Mr. William Henry                            | male   | 35.0 |     0 |     0 | 373450           |    8.05 |   nan | S        |
-
-#+begin_example
-<IPython.core.display.HTML object>
-#+end_example
 
 <<a3bffa71-c282-4c23-b6bc-df3c908a5d5c>>
 ** Projection, Selection and Extension

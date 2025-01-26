@@ -14,4 +14,4 @@ We started our space trip to the galaxy of Python Analytics [[https://noiseonthe
 
 Now it's time to meet some of the most fascinating inhabitants: [[https://pandas.pydata.org/docs/][the pandas]]
 
-The code and jupyter notebook for the posts in this series are available in this [[https://github.com/noiseOnTheNet/python-post023_jupyter_analitics][repository]]
+The code, datasets and jupyter notebook for the posts in this series are available in this [[https://github.com/noiseOnTheNet/python-post023_jupyter_analitics][repository]]
