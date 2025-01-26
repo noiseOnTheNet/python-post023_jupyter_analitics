@@ -1,3 +1,21 @@
+#+BLOG: noise on the net
+#+POSTID: 594
+#+DATE: [2025-01-25 sab 16:08]
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
+#+CATEGORY: Language learning
+#+TAGS: Python
+#+DESCRIPTION:
+#+PROPERTY: header-args:python  :session *Python* :exports both :results table
+#+TITLE: Meet the Pandas
+file:images/thomas-bonometti-OyO5NDiRPMM-unsplash.jpg
+Photo by [[https://unsplash.com/@bonopeppers?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Thomas Bonometti]] on [[https://unsplash.com/photos/sun-bear-lying-on-logs-OyO5NDiRPMM?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Unsplash]]
+
+We started our space trip to the galaxy of Python Analytics [[https://noiseonthenet.space/noise/2025/01/a-trip-to-jupyter-lab/][heading onto Jupyter]] .
+
+Now it's time to meet some of the most fascinating inhabitants: [[https://pandas.pydata.org/docs/][the pandas]]
+
+The code and jupyter notebook for the posts in this series are available in this [[https://github.com/noiseOnTheNet/python-post023_jupyter_analitics][repository]]
+
 <<95761686-2e93-445b-b1ec-4ef918d92cf3>>
 * Using Pandas (basic introduction)
 :PROPERTIES:
@@ -7,9 +25,12 @@ Pandas is a library to work with data using relational tables
 
 To prepare for this lesson execute the following cell
 
-#+begin_src jupyter-python
+#+begin_src python
 !git clone https://github.com/datasciencedojo/datasets.git
 #+end_src
+
+#+RESULTS:
+|   |
 
 #+begin_example
 Cloning into 'datasets'...
@@ -18,9 +39,12 @@ Cloning into 'datasets'...
 <<85261107-0646-44ab-b92b-6990e629b772>>
 import the pandas library and assign it a shorter alias
 
-#+begin_src jupyter-python
+#+begin_src python :exports code
 import pandas as pd
 #+end_src
+
+#+RESULTS:
+| None |
 
 <<47fb6f03-0fc7-4bd0-9a8c-b8f780996441>>
 ** Loading data
@@ -39,30 +63,23 @@ from various file types
 A data frame contains many functions to explore it e.g. the =.head()=
 method shows the first lines of a data frame
 
-#+begin_src jupyter-python
+#+begin_src python
 titanic = pd.read_csv("datasets/titanic.csv")
 titanic.head()
 #+end_src
 
 #+RESULTS:
-:    PassengerId  Survived  Pclass  \
-: 0            1         0       3   
-: 1            2         1       1   
-: 2            3         1       3   
-: 3            4         1       1   
-: 4            5         0       3   
-:                                                 Name     Sex   Age  SibSp  \
-: 0                            Braund, Mr. Owen Harris    male  22.0      1   
-: 1  Cumings, Mrs. John Bradley (Florence Briggs Th...  female  38.0      1   
-: 2                             Heikkinen, Miss. Laina  female  26.0      0   
-: 3       Futrelle, Mrs. Jacques Heath (Lily May Peel)  female  35.0      1   
-: 4                           Allen, Mr. William Henry    male  35.0      0   
-:    Parch            Ticket     Fare Cabin Embarked  
-: 0      0         A/5 21171   7.2500   NaN        S  
-: 1      0          PC 17599  71.2833   C85        C  
-: 2      0  STON/O2. 3101282   7.9250   NaN        S  
-: 3      0            113803  53.1000  C123        S  
-: 4      0            373450   8.0500   NaN        S  
+|   | PassengerId | Survived | Pclass | Name                                                | Sex    |  Age | SibSp | Parch | Ticket           |    Fare | Cabin | Embarked |
+|---+-------------+----------+--------+-----------------------------------------------------+--------+------+-------+-------+------------------+---------+-------+----------|
+| 0 |           1 |        0 |      3 | Braund, Mr. Owen Harris                             | male   | 22.0 |     1 |     0 | A/5 21171        |    7.25 |   nan | S        |
+| 1 |           2 |        1 |      1 | Cumings, Mrs. John Bradley (Florence Briggs Thayer) | female | 38.0 |     1 |     0 | PC 17599         | 71.2833 |   C85 | C        |
+| 2 |           3 |        1 |      3 | Heikkinen, Miss. Laina                              | female | 26.0 |     0 |     0 | STON/O2. 3101282 |   7.925 |   nan | S        |
+| 3 |           4 |        1 |      1 | Futrelle, Mrs. Jacques Heath (Lily May Peel)        | female | 35.0 |     1 |     0 | 113803           |    53.1 |  C123 | S        |
+| 4 |           5 |        0 |      3 | Allen, Mr. William Henry                            | male   | 35.0 |     0 |     0 | 373450           |    8.05 |   nan | S        |
+
+#+begin_example
+<IPython.core.display.HTML object>
+#+end_example
 
 <<a3bffa71-c282-4c23-b6bc-df3c908a5d5c>>
 ** Projection, Selection and Extension
@@ -72,14 +89,17 @@ titanic.head()
 a data frame is a table; you can get its column names using the
 =.columns= attributes
 
-#+begin_src jupyter-python
+#+begin_src python :results verbatim drawer
 titanic.columns
 #+end_src
 
 #+RESULTS:
-: Index(['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
-:        'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked'],
-:       dtype='object')
+:results:
+Index(['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
+       'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked'],
+      dtype='object')
+:end:
+
 
 <<fcc8cbb9-9bc6-49de-9860-63fe5daf2903>>
 columns can be accessed individually or in groups; this operation is
@@ -96,24 +116,18 @@ Each column is called a *Series* in pandas jargon
 Groups of columns can be accessed by passing a list of strings to the
 bracket operator
 
-#+begin_src jupyter-python
-titanic[["Survived","Pclass","Sex","Age"]]
+#+begin_src python
+titanic[["Survived","Pclass","Sex","Age"]].head()
 #+end_src
 
 #+RESULTS:
-:      Survived  Pclass     Sex   Age
-: 0           0       3    male  22.0
-: 1           1       1  female  38.0
-: 2           1       3  female  26.0
-: 3           1       1  female  35.0
-: 4           0       3    male  35.0
-: ..        ...     ...     ...   ...
-: 886         0       2    male  27.0
-: 887         1       1  female  19.0
-: 888         0       3  female   NaN
-: 889         1       1    male  26.0
-: 890         0       3    male  32.0
-: [891 rows x 4 columns]
+|   | Survived | Pclass | Sex    |  Age |
+|---+----------+--------+--------+------|
+| 0 |        0 |      3 | male   | 22.0 |
+| 1 |        1 |      1 | female | 38.0 |
+| 2 |        1 |      3 | female | 26.0 |
+| 3 |        1 |      1 | female | 35.0 |
+| 4 |        0 |      3 | male   | 35.0 |
 
 <<7042bbbb-0d38-4d7f-9ae7-621a906dbf31>>
 operations on series are vectorized i.e. each individual element is used
@@ -122,7 +136,7 @@ to get a new vector
 Operations within a series and a scalar value are repeated for all
 values of a series
 
-#+begin_src python
+#+begin_src python :noeval :exports code
 titanic.Pclass == 1
 #+end_src
 
@@ -133,48 +147,18 @@ filters all of the lines which are satisfying the logic statement
 expressed; this operation is called *selection* which is a synonim for
 filter
 
-#+begin_src jupyter-python
-titanic[titanic.Pclass == 1]
+#+begin_src python
+titanic[titanic.Pclass == 1].head()
 #+end_src
 
 #+RESULTS:
-:      PassengerId  Survived  Pclass  \
-: 1              2         1       1   
-: 3              4         1       1   
-: 6              7         0       1   
-: 11            12         1       1   
-: 23            24         1       1   
-: ..           ...       ...     ...   
-: 871          872         1       1   
-: 872          873         0       1   
-: 879          880         1       1   
-: 887          888         1       1   
-: 889          890         1       1   
-:                                                   Name     Sex   Age  SibSp  \
-: 1    Cumings, Mrs. John Bradley (Florence Briggs Th...  female  38.0      1   
-: 3         Futrelle, Mrs. Jacques Heath (Lily May Peel)  female  35.0      1   
-: 6                              McCarthy, Mr. Timothy J    male  54.0      0   
-: 11                            Bonnell, Miss. Elizabeth  female  58.0      0   
-: 23                        Sloper, Mr. William Thompson    male  28.0      0   
-: ..                                                 ...     ...   ...    ...   
-: 871   Beckwith, Mrs. Richard Leonard (Sallie Monypeny)  female  47.0      1   
-: 872                           Carlsson, Mr. Frans Olof    male  33.0      0   
-: 879      Potter, Mrs. Thomas Jr (Lily Alexenia Wilson)  female  56.0      0   
-: 887                       Graham, Miss. Margaret Edith  female  19.0      0   
-: 889                              Behr, Mr. Karl Howell    male  26.0      0   
-:      Parch    Ticket     Fare        Cabin Embarked  
-: 1        0  PC 17599  71.2833          C85        C  
-: 3        0    113803  53.1000         C123        S  
-: 6        0     17463  51.8625          E46        S  
-: 11       0    113783  26.5500         C103        S  
-: 23       0    113788  35.5000           A6        S  
-: ..     ...       ...      ...          ...      ...  
-: 871      1     11751  52.5542          D35        S  
-: 872      0       695   5.0000  B51 B53 B55        S  
-: 879      1     11767  83.1583          C50        C  
-: 887      0    112053  30.0000          B42        S  
-: 889      0    111369  30.0000         C148        C  
-: [216 rows x 12 columns]
+|    | PassengerId | Survived | Pclass | Name                                                | Sex    |  Age | SibSp | Parch |   Ticket |    Fare | Cabin | Embarked |
+|----+-------------+----------+--------+-----------------------------------------------------+--------+------+-------+-------+----------+---------+-------+----------|
+|  1 |           2 |        1 |      1 | Cumings, Mrs. John Bradley (Florence Briggs Thayer) | female | 38.0 |     1 |     0 | PC 17599 | 71.2833 | C85   | C        |
+|  3 |           4 |        1 |      1 | Futrelle, Mrs. Jacques Heath (Lily May Peel)        | female | 35.0 |     1 |     0 |   113803 |    53.1 | C123  | S        |
+|  6 |           7 |        0 |      1 | McCarthy, Mr. Timothy J                             | male   | 54.0 |     0 |     0 |    17463 | 51.8625 | E46   | S        |
+| 11 |          12 |        1 |      1 | Bonnell, Miss. Elizabeth                            | female | 58.0 |     0 |     0 |   113783 |   26.55 | C103  | S        |
+| 23 |          24 |        1 |      1 | Sloper, Mr. William Thompson                        | male   | 28.0 |     0 |     0 |   113788 |    35.5 | A6    | S        |
 
 <<85e936c9-3622-4b37-bb01-f51214504565>>
 Usually selection and projection are used at the same time; the
@@ -185,24 +169,18 @@ arguments are:
 2. a string list of column names or the splice operator =:= for all
    columns
 
-#+begin_src jupyter-python
-titanic.loc[titanic.Pclass==1,["Survived","Sex","Age"]]
+#+begin_src python
+titanic.loc[titanic.Pclass==1,["Survived","Sex","Age"]].head()
 #+end_src
 
 #+RESULTS:
-:      Survived     Sex   Age
-: 1           1  female  38.0
-: 3           1  female  35.0
-: 6           0    male  54.0
-: 11          1  female  58.0
-: 23          1    male  28.0
-: ..        ...     ...   ...
-: 871         1  female  47.0
-: 872         0    male  33.0
-: 879         1  female  56.0
-: 887         1  female  19.0
-: 889         1    male  26.0
-: [216 rows x 3 columns]
+|    | Survived | Sex    |  Age |
+|----+----------+--------+------|
+|  1 |        1 | female | 38.0 |
+|  3 |        1 | female | 35.0 |
+|  6 |        0 | male   | 54.0 |
+| 11 |        1 | female | 58.0 |
+| 23 |        1 | male   | 28.0 |
 
 <<79320f5b-c7ef-4671-bb2e-596a936bc83a>>
 It is possible to extend a table with more columns possibly as a result
@@ -211,20 +189,22 @@ from a computation in other columns
 To create a new column, just assign an expression to a new column name
 e.g.
 
-#+begin_src python
+#+begin_src python :noeval :exports code
 df["above_average"] = (df.score > df.score.mean())
 #+end_src
 
-#+begin_src jupyter-python
+#+begin_src python :results verbatim drawer
 countries = pd.read_csv("datasets/WorldDBTables/CountryTable.csv")
 countries.columns
 #+end_src
 
 #+RESULTS:
-: Index(['code', 'name', 'continent', 'region', 'surface_area',
-:        'independence_year', 'population', 'life_expectancy', 'gnp', 'gnp_old',
-:        'local_name', 'government_form', 'head_of_state', 'capital', 'code2'],
-:       dtype='object')
+:results:
+Index(['code', 'name', 'continent', 'region', 'surface_area',
+       'independence_year', 'population', 'life_expectancy', 'gnp', 'gnp_old',
+       'local_name', 'government_form', 'head_of_state', 'capital', 'code2'],
+      dtype='object')
+:end:
 
 <<3cebceb3-c35e-4f67-b447-31eb46ed761d>>
 *** Exercise
@@ -239,25 +219,19 @@ column and the land extension in the =surface area=
 1. calculate the ratio of these two columns and store it in a new column
    called =population density=
 
-#+begin_src jupyter-python
+#+begin_src python
 countries["population_density"] = countries.population /  countries.surface_area
-countries.loc[:,["name","population_density"]]
+countries.loc[:,["name","population_density"]].head()
 #+end_src
 
 #+RESULTS:
-:              name  population_density
-: 0           Aruba          533.678756
-: 1     Afghanistan           34.841816
-: 2          Angola           10.329670
-: 3        Anguilla           83.333333
-: 4         Albania          118.310839
-: ..            ...                 ...
-: 234         Yemen           34.305109
-: 235    Yugoslavia          104.137101
-: 236  South Africa           33.067794
-: 237        Zambia           12.182807
-: 238      Zimbabwe           29.862549
-: [239 rows x 2 columns]
+|   | name        | population_density |
+|---+-------------+--------------------|
+| 0 | Aruba       |  533.6787564766839 |
+| 1 | Afghanistan |  34.84181631369903 |
+| 2 | Angola      |  10.32967032967033 |
+| 3 | Anguilla    |  83.33333333333333 |
+| 4 | Albania     | 118.31083901488799 |
 
 <<e8a007fb-86dc-4dd9-8afe-b9ec3f5d0997>>
 1. sort the table in descending order using the =.sort_values= function
@@ -266,17 +240,18 @@ countries.loc[:,["name","population_density"]]
 3. show the first lines of the table using the =.head()= method: what
    are the most densely populated countries?
 
-#+begin_src jupyter-python
+#+begin_src python
 countries.sort_values("population_density",ascending=False).loc[:,["name","population_density"]].head()
 #+end_src
 
 #+RESULTS:
-:           name  population_density
-: 129      Macao        26277.777778
-: 131     Monaco        22666.666667
-: 92   Hong Kong         6308.837209
-: 186  Singapore         5771.844660
-: 79   Gibraltar         4166.666667
+|     | name      | population_density |
+|-----+-----------+--------------------|
+| 129 | Macao     | 26277.777777777777 |
+| 131 | Monaco    | 22666.666666666668 |
+|  92 | Hong Kong |  6308.837209302325 |
+| 186 | Singapore |  5771.844660194175 |
+|  79 | Gibraltar |  4166.666666666667 |
 
 <<0f33427e-25be-4a1a-add9-531d0d4777e5>>
 ** Join and concatenation
@@ -330,7 +305,7 @@ lesson we need to join these tables
 
 the =pd.merge()= function performs the join operation e.g.
 
-#+begin_src python
+#+begin_src python :noeval :exports code
 courses_classrooms = pd.merge(courses,classroom)
 courses_bookings = ps.merge(courses_classroom, bookings)
 #+end_src
@@ -371,11 +346,14 @@ and =right_on== options to match them.
 4. show some lines of the table keeping only the following columns:
    =["name","language","people_speaking","official"]= what do you see?
 
-#+begin_src jupyter-python
+#+begin_src python :exports code
 languages = pd.read_csv("datasets/WorldDBTables/LanguageTable.csv")
 #+end_src
 
-#+begin_src jupyter-python
+#+RESULTS:
+| None |
+
+#+begin_src python
 languages_by_country = pd.merge(
     countries, languages, 
     how="inner", 
@@ -383,23 +361,17 @@ languages_by_country = pd.merge(
 )
 languages_by_country["people_speaking"] = languages_by_country.population * \
     languages_by_country.percentage / 100
-languages_by_country[["name","language","people_speaking","official"]]
+languages_by_country[["name","language","people_speaking","official"]].head()
 #+end_src
 
 #+RESULTS:
-:             name    language  people_speaking official
-: 0          Aruba       Dutch           5459.0        T
-: 1          Aruba     English           9785.0        F
-: 2          Aruba  Papiamento          79001.0        F
-: 3          Aruba     Spanish           7622.0        F
-: 4    Afghanistan     Balochi         204480.0        F
-: ..           ...         ...              ...      ...
-: 839       Zambia      Tongan        1008590.0        F
-: 840     Zimbabwe     English         256718.0        T
-: 841     Zimbabwe     Ndebele        1890378.0        F
-: 842     Zimbabwe      Nyanja         256718.0        F
-: 843     Zimbabwe       Shona        8413349.0        F
-: [844 rows x 4 columns]
+|   | name        | language   | people_speaking | official |
+|---+-------------+------------+-----------------+----------|
+| 0 | Aruba       | Dutch      |          5459.0 | T        |
+| 1 | Aruba       | English    |          9785.0 | F        |
+| 2 | Aruba       | Papiamento |         79001.0 | F        |
+| 3 | Aruba       | Spanish    |          7622.0 | F        |
+| 4 | Afghanistan | Balochi    |        204480.0 | F        |
 
 <<a7b7b986-e17e-4a61-b97e-eee7ea865f75>>
 *** Concatenation
@@ -409,40 +381,57 @@ languages_by_country[["name","language","people_speaking","official"]]
 It may happen that your data is collected in separated dataframes with
 the same columns ans you need to create a single one from all of them.
 
-#+begin_src jupyter-python
-#!unzip ROMA.zip TG_SOUID100860.txt
+#+begin_src bash :exports code :noeval
+unzip ROMA.zip TG_SOUID100860.txt
 #+end_src
 
-#+begin_src jupyter-python
-#!unzip BARI.zip TG_SOUID245914.txt
+#+begin_src bash :exports code :noeval
+unzip BARI.zip TG_SOUID245914.txt
 #+end_src
 
-#+begin_src jupyter-python
+#+begin_src python
 roma = pd.read_csv("TG_SOUID100860.txt",skiprows=20)
-roma
+roma.head()
 #+end_src
 
 #+RESULTS:
-:         SOUID      DATE    TG  Q_TG
-: 0      100860  19510101    76     0
-: 1      100860  19510102   108     0
-: 2      100860  19510103   116     0
-: 3      100860  19510104   115     0
-: 4      100860  19510105    82     0
-: ...       ...       ...   ...   ...
-: 26963  100860  20241027 -9999     9
-: 26964  100860  20241028 -9999     9
-: 26965  100860  20241029 -9999     9
-: 26966  100860  20241030 -9999     9
-: 26967  100860  20241031 -9999     9
-: [26968 rows x 4 columns]
-#+begin_src jupyter-python
+|   |  SOUID |     DATE |  TG | Q_TG |
+|---+--------+----------+-----+------|
+| 0 | 100860 | 19510101 |  76 |    0 |
+| 1 | 100860 | 19510102 | 108 |    0 |
+| 2 | 100860 | 19510103 | 116 |    0 |
+| 3 | 100860 | 19510104 | 115 |    0 |
+| 4 | 100860 | 19510105 |  82 |    0 |
+#+begin_src python
 bari = pd.read_csv("TG_SOUID245914.txt",skiprows=20)
+bari.head()
 #+end_src
 
-#+begin_src jupyter-python
+#+RESULTS:
+|   |  SOUID |     DATE |    TG | Q_TG |
+|---+--------+----------+-------+------|
+| 0 | 245914 | 20211201 | -9999 |    9 |
+| 1 | 245914 | 20211202 | -9999 |    9 |
+| 2 | 245914 | 20211203 | -9999 |    9 |
+| 3 | 245914 | 20211204 | -9999 |    9 |
+| 4 | 245914 | 20211205 | -9999 |    9 |
+
+<<322dc1c7-c6bf-40f9-8038-e76553ddfa8c>>
+the =pd.concat()= function can concatenate a list of data frames; the
+default behavior is consistent with the semantic of relations and it
+retunrns a single data frame:
+
+- columns will be the union of all columns of each individual data frame
+  in the input
+- rows will keep the same order as the data frames
+
+#+begin_src python
 temperatures = pd.concat([roma,bari])
+
+# this will remove extra spaces from column names
 temperatures.columns = list(map(str.strip,temperatures.columns))
+
+# this will transform the column type
 for col in ["SOUID","Q_TG"]:
     temperatures[col] = temperatures[col].astype("category")
 temperatures["DATE"]=pd.to_datetime(temperatures["DATE"],format="%Y%m%d")
@@ -450,45 +439,25 @@ print(temperatures.Q_TG.unique())
 temperatures.loc[temperatures.Q_TG != 9,:].describe(include="all")
 #+end_src
 
+#+RESULTS:
+|        |    SOUID | DATE      | TG                              |              Q_TG |         |
+|--------+----------+-----------+---------------------------------+-------------------+---------|
+| count  |  21717.0 | np.int64  | (21717)                         |           21717.0 | 21717.0 |
+| unique |      2.0 | nan       | nan                             |               2.0 |         |
+| top    | 100860.0 | nan       | nan                             |               0.0 |         |
+| freq   |  21525.0 | nan       | nan                             |           21711.0 |         |
+| mean   |      nan | Timestamp | (1980-11-11 03:17:47.716535360) | 154.8837316388083 |     nan |
+| min    |      nan | Timestamp | (1951-01-01 00:00:00)           |             -56.0 |     nan |
+| 25%    |      nan | Timestamp | (1965-11-17 00:00:00)           |             101.0 |     nan |
+| 50%    |      nan | Timestamp | (1980-09-28 00:00:00)           |             150.0 |     nan |
+| 75%    |      nan | Timestamp | (1995-08-22 00:00:00)           |             212.0 |     nan |
+| max    |      nan | Timestamp | (2022-10-18 00:00:00)           |             327.0 |     nan |
+| std    |      nan | nan       | 66.53937042433274               |               nan |         |
+
 #+begin_example
 [0, 9, 1]
 Categories (3, int64): [0, 1, 9]
 #+end_example
-
-#+RESULTS:
-:            SOUID                           DATE            TG     Q_TG
-: count    21717.0                          21717  21717.000000  21717.0
-: unique       2.0                            NaN           NaN      2.0
-: top     100860.0                            NaN           NaN      0.0
-: freq     21525.0                            NaN           NaN  21711.0
-: mean         NaN  1980-11-11 03:17:47.716535360    154.883732      NaN
-: min          NaN            1951-01-01 00:00:00    -56.000000      NaN
-: 25%          NaN            1965-11-17 00:00:00    101.000000      NaN
-: 50%          NaN            1980-09-28 00:00:00    150.000000      NaN
-: 75%          NaN            1995-08-22 00:00:00    212.000000      NaN
-: max          NaN            2022-10-18 00:00:00    327.000000      NaN
-: std          NaN                            NaN     66.539370      NaN
-
-<<8d05ecf4-f6f4-4fe6-b07d-1530c025222b>>
-** Pivoting and melting
-:PROPERTIES:
-:CUSTOM_ID: pivoting-and-melting
-:END:
-
-#+begin_src jupyter-python
-consumo = pd.read_csv("ds523_consumoacquaenergia.csv",sep=";")
-consumo.head()
-#+end_src
-
-#+RESULTS:
-:    anno                       Consumo pro capite tipo  Consumo pro capite
-: 0  2011           Energia elettrica per uso domestico              1196.1
-: 1  2011  Gas metano per uso domestico e riscaldamento               377.9
-: 2  2011             Acqua fatturata per uso domestico                83.1
-: 3  2010           Energia elettrica per uso domestico              1200.7
-: 4  2010  Gas metano per uso domestico e riscaldamento               406.2
-#+begin_src jupyter-python
-#+end_src
 
 <<976214ae-7a2f-4b65-a6d0-32e285eabea2>>
 ** Aggregation
@@ -510,7 +479,7 @@ have a dataframe which looks like the following table
 | andrea | coca cola       | 2      |
 | andrea | french fries    | 2      |
 
-#+begin_src python
+#+begin_src python :noeval :exports code
 groups = bill.groupby(["person"])
 groups.agg({"amount":"sum"})
 #+end_src
@@ -525,28 +494,27 @@ will return
 It is also possible to ask for multiple aggregation by using a list of
 functions
 
-#+begin_src jupyter-python
+#+begin_src python
 g = titanic.groupby(["Pclass","Sex"])
 age_summary = g.agg({"Age":["min","max","mean"]})
 age_summary
 #+end_src
 
 #+RESULTS:
-:                 Age                 
-:                 min   max       mean
-: Pclass Sex                          
-: 1      female  2.00  63.0  34.611765
-:        male    0.92  80.0  41.281386
-: 2      female  2.00  57.0  28.722973
-:        male    0.67  70.0  30.740707
-: 3      female  0.75  63.0  21.750000
-:        male    0.42  74.0  26.507589
+|            | (Age min) | (Age max) |         (Age mean) |
+|------------+-----------+-----------+--------------------|
+| (1 female) |       2.0 |      63.0 |  34.61176470588235 |
+| (1 male)   |      0.92 |      80.0 |  41.28138613861386 |
+| (2 female) |       2.0 |      57.0 | 28.722972972972972 |
+| (2 male)   |      0.67 |      70.0 |  30.74070707070707 |
+| (3 female) |      0.75 |      63.0 |              21.75 |
+| (3 male)   |      0.42 |      74.0 | 26.507588932806325 |
 
 <<8ade7e20-6fed-4152-87aa-73f5415f562e>>
 Please note that here the generated columns are accessible using a tuple
 i.e.
 
-#+begin_src python
+#+begin_src python :noeval :exports code
 age_summary[("Age","mean")]
 #+end_src
 
@@ -564,7 +532,7 @@ exercise
 3. sort the dataset from the largest group descending
 4. show the first lines using =.head()= method
 
-#+begin_src jupyter-python
+#+begin_src python
 g = languages_by_country.groupby(["language"])
 languages_spoken = g.agg({"people_speaking":"sum"})
 languages_spoken_sorted = languages_spoken.sort_values("people_speaking",ascending=False)
@@ -572,29 +540,29 @@ languages_spoken_sorted.head(20)
 #+end_src
 
 #+RESULTS:
-:             people_speaking
-: language                   
-: Chinese        1.190153e+09
-: Hindi          4.056192e+08
-: Spanish        3.079974e+08
-: Bengali        2.093047e+08
-: Arabic         2.054908e+08
-: Portuguese     1.769819e+08
-: Japanese       1.262540e+08
-: Punjabi        1.040254e+08
-: English        9.161603e+07
-: Javanese       8.357016e+07
-: Telugu         7.906564e+07
-: Marathi        7.501099e+07
-: Korean         7.145076e+07
-: Vietnamese     6.990842e+07
-: Tamil          6.868227e+07
-: French         6.794773e+07
-: Urdu           6.358947e+07
-: Italian        5.718365e+07
-: Gujarati       4.865578e+07
-: Malay          4.151799e+07
-#+begin_src jupyter-python
+| language   | people_speaking |
+|------------+-----------------|
+| Chinese    |    1190152805.0 |
+| Hindi      |     405619174.0 |
+| Spanish    |     307997398.0 |
+| Bengali    |     209304719.0 |
+| Arabic     |     205490840.7 |
+| Portuguese |     176981914.4 |
+| Japanese   |     126254034.0 |
+| Punjabi    |     104025371.0 |
+| English    |      91616031.3 |
+| Javanese   |      83570158.0 |
+| Telugu     |      79065636.0 |
+| Marathi    |      75010988.0 |
+| Korean     |      71450757.0 |
+| Vietnamese |      69908416.0 |
+| Tamil      |      68682272.0 |
+| French     |      67947730.0 |
+| Urdu       |      63589470.0 |
+| Italian    |      57183654.1 |
+| Gujarati   |      48655776.0 |
+| Malay      |      41517994.0 |
+#+begin_src python
 g = languages_by_country.groupby(["continent","language"])
 languages_spoken = g.agg({"people_speaking":"sum"})
 languages_spoken_sorted = languages_spoken.sort_values("people_speaking",ascending=False)
@@ -602,59 +570,212 @@ languages_spoken_sorted.head(20)
 #+end_src
 
 #+RESULTS:
-:                           people_speaking
-: continent     language                   
-: Asia          Chinese        1.189353e+09
-:               Hindi          4.051690e+08
-:               Bengali        2.093047e+08
-: South America Portuguese     1.660380e+08
-:               Spanish        1.456209e+08
-: Africa        Arabic         1.343921e+08
-: North America Spanish        1.327070e+08
-: Asia          Japanese       1.255736e+08
-:               Punjabi        1.038073e+08
-:               Javanese       8.357016e+07
-:               Telugu         7.906564e+07
-:               Marathi        7.501099e+07
-:               Korean         7.144569e+07
-:               Vietnamese     6.990842e+07
-:               Arabic         6.918428e+07
-:               Tamil          6.868227e+07
-:               Urdu           6.358947e+07
-: Europe        English        6.179907e+07
-:               French         6.045545e+07
-:               Italian        5.534415e+07
-#+begin_src jupyter-python
-languages_spoken_sorted=languages_spoken_sorted.reset_index()
-#+end_src
+|                            |    people_speaking |
+|----------------------------+--------------------|
+| (Asia Chinese)             |       1189353427.0 |
+| (Asia Hindi)               |        405169038.0 |
+| (Asia Bengali)             |        209304719.0 |
+| (South America Portuguese) |        166037997.0 |
+| (South America Spanish)    |        145620868.0 |
+| (Africa Arabic)            |        134392131.0 |
+| (North America Spanish)    |        132707046.0 |
+| (Asia Japanese)            |        125573574.0 |
+| (Asia Punjabi)             |        103807342.0 |
+| (Asia Javanese)            |         83570158.0 |
+| (Asia Telugu)              |         79065636.0 |
+| (Asia Marathi)             |         75010988.0 |
+| (Asia Korean)              |         71445687.0 |
+| (Asia Vietnamese)          |         69908416.0 |
+| (Asia Arabic)              |         69184280.0 |
+| (Asia Tamil)               |         68682272.0 |
+| (Asia Urdu)                |         63589470.0 |
+| (Europe English)           | 61799068.300000004 |
+| (Europe French)            |         60455448.0 |
+| (Europe Italian)           |         55344151.1 |
 
-#+begin_src jupyter-python
+#+begin_src python
+languages_spoken_sorted=languages_spoken_sorted.reset_index()
 g = languages_spoken_sorted.groupby(["continent"])
 result = []
 for i,subtable in g:
     result.append(subtable.head(3).reset_index())
-pd.concat(result)
+pd.concat(result).head()
 #+end_src
 
 #+RESULTS:
-:    index      continent              language  people_speaking
-: 0      5         Africa                Arabic     1.343921e+08
-: 1     32         Africa                 Hausa     2.922540e+07
-: 2     33         Africa                Joruba     2.486887e+07
-: 0      0           Asia               Chinese     1.189353e+09
-: 1      1           Asia                 Hindi     4.051690e+08
-: 2      2           Asia               Bengali     2.093047e+08
-: 0     17         Europe               English     6.179907e+07
-: 1     18         Europe                French     6.045545e+07
-: 2     19         Europe               Italian     5.534415e+07
-: 0      6  North America               Spanish     1.327070e+08
-: 1     37  North America               English     2.211344e+07
-: 2     74  North America          Haiti Creole     8.222000e+06
-: 0    130        Oceania      Papuan Languages     3.792451e+06
-: 1    145        Oceania               English     3.367480e+06
-: 2    216        Oceania  Malenasian Languages     1.438620e+06
-: 0      3  South America            Portuguese     1.660380e+08
-: 1      4  South America               Spanish     1.456209e+08
-: 2    109  South America                KetSua     4.883217e+06
-#+begin_src jupyter-python
+|   | index | continent | language | people_speaking |
+|---+-------+-----------+----------+-----------------|
+| 0 |     5 | Africa    | Arabic   |     134392131.0 |
+| 1 |    32 | Africa    | Hausa    |      29225396.0 |
+| 2 |    33 | Africa    | Joruba   |      24868874.0 |
+| 0 |     0 | Asia      | Chinese  |    1189353427.0 |
+| 1 |     1 | Asia      | Hindi    |     405169038.0 |
+
+<<ad635e9d-74a3-4ae7-b57b-ab9ba18b08df>>
+** Translate the content of a table
+:PROPERTIES:
+:CUSTOM_ID: translate-the-content-of-a-table
+:END:
+Suppose we need to translate some foreign language content
+
+#+begin_src python
+resources = pd.read_csv("ds523_consumoacquaenergia.csv",sep=";")
+resources.head()
 #+end_src
+
+#+RESULTS:
+|   | anno | Consumo pro capite tipo                      | Consumo pro capite |
+|---+------+----------------------------------------------+--------------------|
+| 0 | 2011 | Energia elettrica per uso domestico          |             1196.1 |
+| 1 | 2011 | Gas metano per uso domestico e riscaldamento |              377.9 |
+| 2 | 2011 | Acqua fatturata per uso domestico            |               83.1 |
+| 3 | 2010 | Energia elettrica per uso domestico          |             1200.7 |
+| 4 | 2010 | Gas metano per uso domestico e riscaldamento |              406.2 |
+
+<<a15b728b-2ab7-419a-928d-f28d81b584d1>>
+The second column looks like a categorical series, so let's check it
+
+#+begin_src python :results verbatim drawer
+resources["Consumo pro capite tipo"].unique()
+#+end_src
+
+#+RESULTS:
+:results:
+['Energia elettrica per uso domestico'
+ 'Gas metano per uso domestico e riscaldamento'
+ 'Acqua fatturata per uso domestico']
+:end:
+
+<<34cd929a-cc4c-4a37-899a-c9798b4dab87>>
+we can pass a dictionary to the =.map()= method like this:
+
+#+begin_src python :exports code
+translate = {
+    'Energia elettrica per uso domestico':'electricity',
+    'Gas metano per uso domestico e riscaldamento':'methan',
+    'Acqua fatturata per uso domestico':'water'
+}
+resources["type"] = resources["Consumo pro capite tipo"].map(translate)
+#+end_src
+
+#+RESULTS:
+| None |
+
+<<700acc71-8df5-4f41-8cf1-45155914c7fa>>
+Also columns can be renamed or removed
+
+#+begin_src python
+resources = resources.rename({"anno":"year","Consumo pro capite":"usage per person"}, axis="columns")
+del resources["Consumo pro capite tipo"]
+resources.head()
+#+end_src
+
+#+RESULTS:
+|   | year | usage per person | type        |
+|---+------+------------------+-------------|
+| 0 | 2011 |           1196.1 | electricity |
+| 1 | 2011 |            377.9 | methan      |
+| 2 | 2011 |             83.1 | water       |
+| 3 | 2010 |           1200.7 | electricity |
+| 4 | 2010 |            406.2 | methan      |
+
+<<8d05ecf4-f6f4-4fe6-b07d-1530c025222b>>
+** Pivoting and melting
+:PROPERTIES:
+:CUSTOM_ID: pivoting-and-melting
+:END:
+Pivot is a family of aggregation functions whose main purpose is to
+collect data from a relation and aggregate them by using one or more
+attribute columns.
+
+This process will create a column per each combination of the
+attributes; the result table is sometime referred as "wide format" table
+or "two entries table"; let's make an example
+
+#+begin_src python
+resources2 = resources.pivot(index="year",columns="type",values="usage per person").reset_index()
+resources2
+#+end_src
+
+#+RESULTS:
+|    |   year | electricity | methan | water |
+|----+--------+-------------+--------+-------|
+|  0 | 2000.0 |      1130.2 |  509.0 |  92.1 |
+|  1 | 2001.0 |      1143.9 |  500.7 |  91.3 |
+|  2 | 2002.0 |      1195.5 |  504.2 |  90.4 |
+|  3 | 2003.0 |      1222.8 |  480.2 |  87.3 |
+|  4 | 2004.0 |      1228.6 |  442.4 |  80.4 |
+|  5 | 2005.0 |      1225.0 |  434.5 |  81.3 |
+|  6 | 2006.0 |      1219.7 |  431.3 |  82.2 |
+|  7 | 2007.0 |      1197.0 |  381.1 |  81.6 |
+|  8 | 2008.0 |      1203.0 |  384.9 |  84.5 |
+|  9 | 2009.0 |      1202.9 |  389.6 |  85.8 |
+| 10 | 2010.0 |      1200.7 |  406.2 |  83.2 |
+| 11 | 2011.0 |      1196.1 |  377.9 |  83.1 |
+
+<<8652d97f-cd5f-430e-9ca9-b0f54a47dd3c>>
+As there was exactly one value per each year and each commodity the
+previous example just moved values without performing any calculation.
+
+Suppose now we want to split some restaurant bill
+
+#+begin_src python
+bill = pd.DataFrame([
+    {"item":"pepperoni pizza", "amount":12, "customer": "Marco", "day": "Monday"},
+    {"item":"beer", "amount":7.5, "customer": "Marco", "day": "Monday"},
+    {"item":"coffee", "amount":1.2, "customer": "Marco", "day": "Monday"},
+    {"item":"pizza margherita", "amount":10, "customer": "Luca", "day": "Monday"},
+    {"item":"wine", "amount":10, "customer": "Luca", "day": "Monday"},
+    {"item":"steak", "amount":20, "customer": "Marco", "day": "Tuesday"},
+    {"item":"bottled water", "amount":5, "customer": "Marco", "day": "Tuesday"},
+])
+bill
+#+end_src
+
+#+RESULTS:
+|   | item             | amount | customer | day     |
+|---+------------------+--------+----------+---------|
+| 0 | pepperoni pizza  |   12.0 | Marco    | Monday  |
+| 1 | beer             |    7.5 | Marco    | Monday  |
+| 2 | coffee           |    1.2 | Marco    | Monday  |
+| 3 | pizza margherita |   10.0 | Luca     | Monday  |
+| 4 | wine             |   10.0 | Luca     | Monday  |
+| 5 | steak            |   20.0 | Marco    | Tuesday |
+| 6 | bottled water    |    5.0 | Marco    | Tuesday |
+
+<<48ea3767-c4fc-4ab5-9d5d-ceec30a5b98a>>
+pandas function =pivot_table= allows to define an aggregation function
+in case of collision
+
+#+begin_src python
+splitted_bill = pd.pivot_table(bill,index="day",values="amount",columns="customer",aggfunc="sum")
+splitted_bill
+#+end_src
+
+#+RESULTS:
+| day     | Luca | Marco |
+|---------+------+-------|
+| Monday  | 20.0 |  20.7 |
+| Tuesday |  nan |  25.0 |
+
+<<7a08eac5-26ff-4d62-92fa-68c1c5443495>>
+pandas =pd.melt()= function provides a way to get a "long format" table
+
+#+begin_src python
+pd.melt(splitted_bill)
+#+end_src
+
+#+RESULTS:
+|   | customer | value |
+|---+----------+-------|
+| 0 | Luca     |  20.0 |
+| 1 | Luca     |   nan |
+| 2 | Marco    |  20.7 |
+| 3 | Marco    |  25.0 |
+#+begin_src python
+#+end_src
+
+#+RESULTS:
+|   |
+
+# images/thomas-bonometti-OyO5NDiRPMM-unsplash.jpg https://noiseonthenet.space/noise/wp-content/uploads/2025/01/thomas-bonometti-OyO5NDiRPMM-unsplash-1.jpg

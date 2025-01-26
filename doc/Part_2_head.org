@@ -1,0 +1,17 @@
+#+BLOG: noise on the net
+#+POSTID: 594
+#+DATE: [2025-01-25 sab 16:08]
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
+#+CATEGORY: Language learning
+#+TAGS: Python
+#+DESCRIPTION:
+#+PROPERTY: header-args:python  :session *Python* :exports both :results table
+#+TITLE: Meet the Pandas
+file:images/thomas-bonometti-OyO5NDiRPMM-unsplash.jpg
+Photo by [[https://unsplash.com/@bonopeppers?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Thomas Bonometti]] on [[https://unsplash.com/photos/sun-bear-lying-on-logs-OyO5NDiRPMM?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Unsplash]]
+
+We started our space trip to the galaxy of Python Analytics [[https://noiseonthenet.space/noise/2025/01/a-trip-to-jupyter-lab/][heading onto Jupyter]] .
+
+Now it's time to meet some of the most fascinating inhabitants: [[https://pandas.pydata.org/docs/][the pandas]]
+
+The code and jupyter notebook for the posts in this series are available in this [[https://github.com/noiseOnTheNet/python-post023_jupyter_analitics][repository]]

@@ -37,3 +37,5 @@ All original material is licensed under GNU GPLv3
   - [[file:doc/ds523_consumoacquaenergia.csv][Energy, Gas and Water]]
 ** Iris
 - [[file:doc/iris.csv][Iris]]
+* Blog Posts
+- https://noiseonthenet.space/noise/2025/01/a-trip-to-jupyter-lab/
