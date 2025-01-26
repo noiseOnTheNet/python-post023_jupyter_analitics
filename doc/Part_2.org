@@ -10,11 +10,15 @@
 file:images/thomas-bonometti-OyO5NDiRPMM-unsplash.jpg
 Photo by [[https://unsplash.com/@bonopeppers?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Thomas Bonometti]] on [[https://unsplash.com/photos/sun-bear-lying-on-logs-OyO5NDiRPMM?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Unsplash]]
 
+
 We started our space trip to the galaxy of Python Analytics [[https://noiseonthenet.space/noise/2025/01/a-trip-to-jupyter-lab/][heading onto Jupyter]] .
+
 
 Now it's time to meet some of the most fascinating inhabitants: [[https://pandas.pydata.org/docs/][the pandas]]
 
+
 The code, datasets and jupyter notebook for the posts in this series are available in this [[https://github.com/noiseOnTheNet/python-post023_jupyter_analitics][repository]]
+
 
 <<95761686-2e93-445b-b1ec-4ef918d92cf3>>
 * Using Pandas (basic introduction)
