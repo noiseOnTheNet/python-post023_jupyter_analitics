@@ -1,24 +1,49 @@
 #+BLOG: noise on the net
-#+POSTID: 564
-#+ORG2BLOG:
-#+DATE: [2024-12-29 dom 21:57]
+#+POSTID: 639
+#+DATE: [2025-02-01 sab 18:50]
 #+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
 #+CATEGORY: Language learning
 #+TAGS: Python
 #+DESCRIPTION:
-#+TITLE: Exploratory Data Analysis Intro
+#+PROPERTY: header-args:python  :session *Python* :exports both :results value raw :return tabulate(df, headers=df.columns, tablefmt='orgtbl', floatfmt=".4g")
+#+TITLE: Data: the final frontier
+
+file:images/philipp-dusel--Mbfhs0u4YQ-unsplash.jpg
+
+Photo by [[https://unsplash.com/@philipp_dice?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Philipp Düsel]] on [[https://unsplash.com/photos/the-night-sky-is-filled-with-stars-above-a-mountain-range--Mbfhs0u4YQ?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Unsplash]]
+
+After [[https://noiseonthenet.space/noise/2025/01/a-trip-to-jupyter-lab/][heading onto Jupyter]] and [[https://noiseonthenet.space/noise/2025/01/meet-the-pandas/][meeting the Pandas]] let's boldly go where no one has gone before!
+
+Here are some powerful tools to explore and discover new lifeforms into our data
 
 <<174e59f6-c1c2-4009-bb09-b101c3f9e389>>
 * Introduction to Exploratory Data Analysis with Matplotlib and Seaborn
 :PROPERTIES:
 :CUSTOM_ID: introduction-to-exploratory-data-analysis-with-matplotlib-and-seaborn
 :END:
+In this part we are going to focus on a
+[[https://en.wikipedia.org/wiki/Exploratory_data_analysis][quick
+exploration]] of the data, according to their type and number.
+
+For simplicity we will talk about two main data kind:
+
+- categorical: i.e., a finite list of discrete values which may or may
+  not have a specific order e.g., =yellow=, =red=, =blue=
+- continuous: i.e. numerical values (most often belonging to R) usually
+  represented with a =float= computer type
+
+Jupyter and pandas allow you to easily interact with the data and
+perform operations and visualization.
 
 <<e366fc1e-82cc-4124-81a3-1c34c2295d01>>
+*** Installing basic libraries
+:PROPERTIES:
+:CUSTOM_ID: installing-basic-libraries
+:END:
 Execute the following cell only if you need to install the seaborn
 library
 
-#+begin_src python
+#+begin_src bash :noeval :exports code
 !pip install --upgrade matplotlib seaborn
 #+end_src
 
@@ -32,12 +57,28 @@ The following libraries are the foundation tools:
 - *numpy* is a numeric calculation library providing fast c arrays and
   scientific functions
 
-#+begin_src python
+#+begin_src python :exports code
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+from tabulate import tabulate
 #+end_src
+
+#+RESULTS:
+| PassengerId | Survived |      Pclass |
+|-------------+----------+-------------|
+| count       |     1110 |        1110 |
+| unique      |      nan |          13 |
+| top         |      nan | Los Angeles |
+| freq        |      nan |         458 |
+| mean        |  0.00699 |         nan |
+| std         | 0.008124 |         nan |
+| min         |        0 |         nan |
+| 25%         | 0.002863 |         nan |
+| 50%         |  0.00444 |         nan |
+| 75%         |    0.008 |         nan |
+| max         |    0.101 |         nan |
 
 <<178d4a95-08ff-4ef4-a383-dc9c693859eb>>
 ** Bird's eye view of a dataset with Describe
@@ -53,70 +94,72 @@ which is a relation
 Note: the titanic dataset was downloaded at the beginning of Part 2; in
 case you missing it execute the code at the beginning of the lesson
 
+The =.head()= method returns the first lines of your data frame to
+quickly inspect it
+
 #+begin_src python
 titanic = pd.read_csv("datasets/titanic.csv")
-titanic.head()
+df =titanic.head()[["Survived","Pclass","Age","Sex"]]
 #+end_src
 
 #+RESULTS:
-:    PassengerId  Survived  Pclass  \
-: 0            1         0       3   
-: 1            2         1       1   
-: 2            3         1       3   
-: 3            4         1       1   
-: 4            5         0       3   
-:                                                 Name     Sex   Age  SibSp  \
-: 0                            Braund, Mr. Owen Harris    male  22.0      1   
-: 1  Cumings, Mrs. John Bradley (Florence Briggs Th...  female  38.0      1   
-: 2                             Heikkinen, Miss. Laina  female  26.0      0   
-: 3       Futrelle, Mrs. Jacques Heath (Lily May Peel)  female  35.0      1   
-: 4                           Allen, Mr. William Henry    male  35.0      0   
-:    Parch            Ticket     Fare Cabin Embarked  
-: 0      0         A/5 21171   7.2500   NaN        S  
-: 1      0          PC 17599  71.2833   C85        C  
-: 2      0  STON/O2. 3101282   7.9250   NaN        S  
-: 3      0            113803  53.1000  C123        S  
-: 4      0            373450   8.0500   NaN        S  
+| Survived |   Pclass |         Age |
+|----------+----------+-------------|
+| count    |     1110 |        1110 |
+| unique   |      nan |          13 |
+| top      |      nan | Los Angeles |
+| freq     |      nan |         458 |
+| mean     |  0.00699 |         nan |
+| std      | 0.008124 |         nan |
+| min      |        0 |         nan |
+| 25%      | 0.002863 |         nan |
+| 50%      |  0.00444 |         nan |
+| 75%      |    0.008 |         nan |
+| max      |    0.101 |         nan |
 
-<<b6f93f88-db9b-4ad9-a9d6-3faffd6f9815>>
-the =describe()= method shows basic statistics for conrinuous and
-discrete variables
+<<1810cb0c-c89d-4baa-afc2-ee4b5ea76d27>>
+the =.describe()= method returns basic statistics for all numerical
+columns
+
+- min
+- max
+- median
+- mean
+- quartiles
+- count of elements
+
+by using the =.describe(include="all")= option also categorical values
+are shown with some other statistics:
+
+- number of unique discrete values
+- the most common one
+- its frequency
 
 #+begin_src python
-titanic.describe(include="all")
+df =titanic.describe(include="all")[["Survived","Pclass","Age","Sex"]]
 #+end_src
 
 #+RESULTS:
-:         PassengerId    Survived      Pclass                 Name   Sex  \
-: count    891.000000  891.000000  891.000000                  891   891   
-: unique          NaN         NaN         NaN                  891     2   
-: top             NaN         NaN         NaN  Dooley, Mr. Patrick  male   
-: freq            NaN         NaN         NaN                    1   577   
-: mean     446.000000    0.383838    2.308642                  NaN   NaN   
-: std      257.353842    0.486592    0.836071                  NaN   NaN   
-: min        1.000000    0.000000    1.000000                  NaN   NaN   
-: 25%      223.500000    0.000000    2.000000                  NaN   NaN   
-: 50%      446.000000    0.000000    3.000000                  NaN   NaN   
-: 75%      668.500000    1.000000    3.000000                  NaN   NaN   
-: max      891.000000    1.000000    3.000000                  NaN   NaN   
-:                Age       SibSp       Parch  Ticket        Fare Cabin Embarked  
-: count   714.000000  891.000000  891.000000     891  891.000000   204      889  
-: unique         NaN         NaN         NaN     681         NaN   147        3  
-: top            NaN         NaN         NaN  347082         NaN    G6        S  
-: freq           NaN         NaN         NaN       7         NaN     4      644  
-: mean     29.699118    0.523008    0.381594     NaN   32.204208   NaN      NaN  
-: std      14.526497    1.102743    0.806057     NaN   49.693429   NaN      NaN  
-: min       0.420000    0.000000    0.000000     NaN    0.000000   NaN      NaN  
-: 25%      20.125000    0.000000    0.000000     NaN    7.910400   NaN      NaN  
-: 50%      28.000000    0.000000    0.000000     NaN   14.454200   NaN      NaN  
-: 75%      38.000000    1.000000    0.000000     NaN   31.000000   NaN      NaN  
-: max      80.000000    8.000000    6.000000     NaN  512.329200   NaN      NaN  
+| Survived |   Pclass |         Age |
+|----------+----------+-------------|
+| count    |     1110 |        1110 |
+| unique   |      nan |          13 |
+| top      |      nan | Los Angeles |
+| freq     |      nan |         458 |
+| mean     |  0.00699 |         nan |
+| std      | 0.008124 |         nan |
+| min      |        0 |         nan |
+| 25%      | 0.002863 |         nan |
+| 50%      |  0.00444 |         nan |
+| 75%      |    0.008 |         nan |
+| max      |    0.101 |         nan |
+
 
 <<d8cf0c99-1303-40ae-8518-0c70d89cd08d>>
 It is possible to access columns (called =Series= in pandas jargon)
 using the square bracket operator
 
-#+begin_src python
+#+begin_src python :noeval :exports code
 titanic["Pclass"]
 #+end_src
 
@@ -124,7 +167,7 @@ columns whose name is a good python identifier (i.e. starts with a
 letter and contains only letters, numbers and underscore) can be
 accessed using the dot notation e.g.
 
-#+begin_src python
+#+begin_src python :noeval :exports code
 titanic.Pclass
 #+end_src
 
@@ -132,13 +175,15 @@ each column has a data type, as =csv= do not carry any type information,
 this is inferred when loading; other binary data format also include a
 data type. The datas type of a column is saved in the =.dtype= attribute
 
-#+begin_src python
+#+begin_src python :results raw output drawer
 pclass = titanic.Pclass
-pclass.dtype
+print(pclass.dtype)
 #+end_src
 
 #+RESULTS:
-: dtype('int64')
+:results:
+int64
+:end:
 
 <<e71354c6-03ee-446a-9544-dd3d29d274e2>>
 we know this column represents the class of the ticket so we expect it
@@ -146,63 +191,52 @@ to have a finite number of actual values: we can check it with the
 =.unique()= method
 
 #+begin_src python
-pclass.unique()
+df =pclass.unique()
 #+end_src
 
 #+RESULTS:
-: array([3, 1, 2])
 
 <<697e9569-5f02-428e-85a9-692dfc3d1d3b>>
 we see this is a discrete valued columns so we can transform its type
 with the =.astype()= method
 
-#+begin_src python
+#+begin_src python :results verbatim drawer
 pclass = pclass.astype('category')
-pclass.dtype
+df =pclass.dtype
 #+end_src
 
 #+RESULTS:
-: CategoricalDtype(categories=[1, 2, 3], ordered=False, categories_dtype=int64)
+:results:
+:end:
 
 <<686b3eb7-08a6-45ca-b3f5-c67224df2207>>
 Now the statistics are represented differently for pClass
 
 #+begin_src python
 titanic["pClass"] = pclass
-titanic.describe(include="all")
+df =titanic.describe(include="all")[["Survived","Pclass","Age","Sex"]]
 #+end_src
 
 #+RESULTS:
-:         PassengerId Survived Pclass                 Name   Sex         Age  \
-: count    891.000000      891    891                  891   891  714.000000   
-: unique          NaN        2      3                  891     2         NaN   
-: top             NaN        0      3  Dooley, Mr. Patrick  male         NaN   
-: freq            NaN      549    491                    1   577         NaN   
-: mean     446.000000      NaN    NaN                  NaN   NaN   29.699118   
-: std      257.353842      NaN    NaN                  NaN   NaN   14.526497   
-: min        1.000000      NaN    NaN                  NaN   NaN    0.420000   
-: 25%      223.500000      NaN    NaN                  NaN   NaN   20.125000   
-: 50%      446.000000      NaN    NaN                  NaN   NaN   28.000000   
-: 75%      668.500000      NaN    NaN                  NaN   NaN   38.000000   
-: max      891.000000      NaN    NaN                  NaN   NaN   80.000000   
-:              SibSp       Parch  Ticket        Fare Cabin Embarked  pClass  
-: count   891.000000  891.000000     891  891.000000   204      889   891.0  
-: unique         NaN         NaN     681         NaN   147        3     3.0  
-: top            NaN         NaN  347082         NaN    G6        S     3.0  
-: freq           NaN         NaN       7         NaN     4      644   491.0  
-: mean      0.523008    0.381594     NaN   32.204208   NaN      NaN     NaN  
-: std       1.102743    0.806057     NaN   49.693429   NaN      NaN     NaN  
-: min       0.000000    0.000000     NaN    0.000000   NaN      NaN     NaN  
-: 25%       0.000000    0.000000     NaN    7.910400   NaN      NaN     NaN  
-: 50%       0.000000    0.000000     NaN   14.454200   NaN      NaN     NaN  
-: 75%       1.000000    0.000000     NaN   31.000000   NaN      NaN     NaN  
-: max       8.000000    6.000000     NaN  512.329200   NaN      NaN     NaN  
+| Survived |   Pclass |         Age |
+|----------+----------+-------------|
+| count    |     1110 |        1110 |
+| unique   |      nan |          13 |
+| top      |      nan | Los Angeles |
+| freq     |      nan |         458 |
+| mean     |  0.00699 |         nan |
+| std      | 0.008124 |         nan |
+| min      |        0 |         nan |
+| 25%      | 0.002863 |         nan |
+| 50%      |  0.00444 |         nan |
+| 75%      |    0.008 |         nan |
+| max      |    0.101 |         nan |
 
 <<fb8f08df-2593-40a6-8126-0bb605496058>>
 If we know in advance about the type of a column we can give some hint
 to the csv reader
 
-#+begin_src python
+#+begin_src python :exports code :result output raw drawer
 titanic = pd.read_csv(
     "datasets/titanic.csv",
     dtype={
@@ -213,30 +247,44 @@ titanic = pd.read_csv(
 )
 #+end_src
 
+#+RESULTS:
+| Survived |   Pclass |         Age |
+|----------+----------+-------------|
+| count    |     1110 |        1110 |
+| unique   |      nan |          13 |
+| top      |      nan | Los Angeles |
+| freq     |      nan |         458 |
+| mean     |  0.00699 |         nan |
+| std      | 0.008124 |         nan |
+| min      |        0 |         nan |
+| 25%      | 0.002863 |         nan |
+| 50%      |  0.00444 |         nan |
+| 75%      |    0.008 |         nan |
+| max      |    0.101 |         nan |
+
 <<999bce95-792e-4d9f-86c6-7f7b84976d1a>>
 ** Monovariate Categorical
 :PROPERTIES:
 :CUSTOM_ID: monovariate-categorical
 :END:
-Whern we have a category series we can list all of the possible values
+When we have a category series we can list all of the possible values
 using the =.cat.categories= attribute
 
-#+begin_src python
-pclass.cat.categories
+#+begin_src python :results output verbatim drawer
+print(pclass.cat.categories)
 #+end_src
 
 #+RESULTS:
-: Index([1, 2, 3], dtype='int64')
+:results:
+Index([1, 2, 3], dtype='int64')
+:end:
 
 <<2a25f666-b716-44ab-bc4e-3013ed24fa8a>>
 the =sns.countplot()= function show a bar plot of categorical values
 
-#+begin_src python
+#+begin_src python  :noeval
 sns.countplot(pclass)
 #+end_src
-
-#+RESULTS:
-: <Axes: xlabel='count', ylabel='Pclass'>
 
 [[file:images/04c5f7ee20b7c943d81ff65e17f36eaf85fead2b.png]]
 
@@ -249,85 +297,25 @@ sns.countplot(pclass)
 <<af09454e-d7ce-4d3a-8434-4d7ecba9ecce>>
 this dataframe collects pollutant density in California
 
-#+begin_src python
+#+begin_src python :results value
 california = pd.read_csv("california_pb_2023.csv")
-california.describe(include="all")
+df =california.describe(include="all")[['Daily Mean Pb Concentration', 'County']]
 #+end_src
 
 #+RESULTS:
-:               Date Source       Site ID          POC  \
-: count         1110   1110  1.110000e+03  1110.000000   
-: unique         110      1           NaN          NaN   
-: top     03/25/2023    AQS           NaN          NaN   
-: freq            27   1110           NaN          NaN   
-: mean           NaN    NaN  6.052726e+07     3.687387   
-: std            NaN    NaN  2.291897e+05     2.556578   
-: min            NaN    NaN  6.007001e+07     1.000000   
-: 25%            NaN    NaN  6.037110e+07     2.000000   
-: 50%            NaN    NaN  6.037160e+07     2.000000   
-: 75%            NaN    NaN  6.073102e+07     7.000000   
-: max            NaN    NaN  6.111200e+07     8.000000   
-:         Daily Mean Pb Concentration     Units Daily AQI Value  \
-: count                   1110.000000      1110            1110   
-: unique                          NaN         2               1   
-: top                             NaN  ug/m3 LC               .   
-: freq                            NaN       721            1110   
-: mean                       0.006990       NaN             NaN   
-: std                        0.008124       NaN             NaN   
-: min                        0.000000       NaN             NaN   
-: 25%                        0.002863       NaN             NaN   
-: 50%                        0.004440       NaN             NaN   
-: 75%                        0.008000       NaN             NaN   
-: max                        0.101000       NaN             NaN   
-:                       Local Site Name  Daily Obs Count  Percent Complete  ...  \
-: count                            1110           1110.0            1110.0  ...   
-: unique                             20              NaN               NaN  ...   
-: top     Los Angeles-North Main Street              NaN               NaN  ...   
-: freq                              140              NaN               NaN  ...   
-: mean                              NaN              1.0             100.0  ...   
-: std                               NaN              0.0               0.0  ...   
-: min                               NaN              1.0             100.0  ...   
-: 25%                               NaN              1.0             100.0  ...   
-: 50%                               NaN              1.0             100.0  ...   
-: 75%                               NaN              1.0             100.0  ...   
-: max                               NaN              1.0             100.0  ...   
-:         AQS Parameter Description  Method Code     CBSA Code  \
-: count                        1110  1110.000000   1110.000000   
-: unique                          2          NaN           NaN   
-: top                 Lead (TSP) LC          NaN           NaN   
-: freq                          721          NaN           NaN   
-: mean                          NaN   208.942342  33906.954955   
-: std                           NaN    85.422729   8212.589684   
-: min                           NaN   110.000000  12540.000000   
-: 25%                           NaN   110.000000  31080.000000   
-: 50%                           NaN   192.000000  31080.000000   
-: 75%                           NaN   305.000000  41740.000000   
-: max                           NaN   305.000000  44700.000000   
-:                                  CBSA Name State FIPS Code       State  \
-: count                                 1110          1110.0        1110   
-: unique                                  12             NaN           1   
-: top     Los Angeles-Long Beach-Anaheim, CA             NaN  California   
-: freq                                   458             NaN        1110   
-: mean                                   NaN             6.0         NaN   
-: std                                    NaN             0.0         NaN   
-: min                                    NaN             6.0         NaN   
-: 25%                                    NaN             6.0         NaN   
-: 50%                                    NaN             6.0         NaN   
-: 75%                                    NaN             6.0         NaN   
-: max                                    NaN             6.0         NaN   
-:        County FIPS Code       County Site Latitude  Site Longitude  
-: count       1110.000000         1110   1110.000000     1110.000000  
-: unique              NaN           13           NaN             NaN  
-: top                 NaN  Los Angeles           NaN             NaN  
-: freq                NaN          458           NaN             NaN  
-: mean          52.533333          NaN     34.635226     -118.531998  
-: std           22.841325          NaN      1.737296        1.620992  
-: min            7.000000          NaN     32.631242     -122.399044  
-: 25%           37.000000          NaN     33.901389     -118.683685  
-: 50%           37.000000          NaN     34.026370     -118.193056  
-: 75%           73.000000          NaN     34.276316     -117.416010  
-: max          111.000000          NaN     39.761680     -115.483070  
-: [11 rows x 21 columns]
+|        | Daily Mean Pb Concentration |      County |
+|--------+-----------------------------+-------------|
+| count  |                        1110 |        1110 |
+| unique |                         nan |          13 |
+| top    |                         nan | Los Angeles |
+| freq   |                         nan |         458 |
+| mean   |                     0.00699 |         nan |
+| std    |                    0.008124 |         nan |
+| min    |                           0 |         nan |
+| 25%    |                    0.002863 |         nan |
+| 50%    |                     0.00444 |         nan |
+| 75%    |                       0.008 |         nan |
+| max    |                       0.101 |         nan |
 
 <<1616b9b6-febf-4e2a-b35e-82f36a409812>>
 =sns.histplot= shows an histogram
@@ -337,7 +325,19 @@ sns.histplot(california,x="Daily Mean Pb Concentration")
 #+end_src
 
 #+RESULTS:
-: <Axes: xlabel='Daily Mean Pb Concentration', ylabel='Count'>
+|        | Daily Mean Pb Concentration |      County |
+|--------+-----------------------------+-------------|
+| count  |                        1110 |        1110 |
+| unique |                         nan |          13 |
+| top    |                         nan | Los Angeles |
+| freq   |                         nan |         458 |
+| mean   |                     0.00699 |         nan |
+| std    |                    0.008124 |         nan |
+| min    |                           0 |         nan |
+| 25%    |                    0.002863 |         nan |
+| 50%    |                     0.00444 |         nan |
+| 75%    |                       0.008 |         nan |
+| max    |                       0.101 |         nan |
 
 [[file:images/1e179c2227cfbdf703d241d0bb9385b826510526.png]]
 
@@ -345,7 +345,7 @@ sns.histplot(california,x="Daily Mean Pb Concentration")
 This distribution looks like a lognormal distribution, let's show a
 cumulative distribution and plot it with a logaritmic x axis
 
-#+begin_src python
+#+begin_src python :noeval
 sorted_pb = np.sort(california["Daily Mean Pb Concentration"])
 prob_pb = (np.arange(len(sorted_pb)) + 1)/len(sorted_pb)
 ax=sns.lineplot(x=sorted_pb, y=prob_pb)
@@ -359,35 +359,19 @@ This looks nice so we can check by fitting a quantile plot
 
 First we try with a normal quantile, we expect some queues
 
-#+begin_src python
+#+begin_src python :noeval
 from scipy import stats
 stats.probplot(california["Daily Mean Pb Concentration"], plot=sns.mpl.pyplot)
 #+end_src
-
-#+RESULTS:
-: ((array([-3.22755646, -2.96462357, -2.81804229, ...,  2.81804229,
-:           2.96462357,  3.22755646], shape=(1110,)),
-:   array([0.   , 0.   , 0.   , ..., 0.063, 0.066, 0.101], shape=(1110,))),
-:  (np.float64(0.006436362119533206),
-:   np.float64(0.006990054054054056),
-:   np.float64(0.7905697147984764)))
 
 [[file:images/07b8d558d22557e09c33cc108a169772832e1531.png]]
 
 <<d9f56ab0-3602-46d7-b29e-a4ea1e3a3425>>
 We can fit it with a different distribution, so we choose a lognormal
 
-#+begin_src python
+#+begin_src python :noeval
 stats.probplot(california["Daily Mean Pb Concentration"], plot=sns.mpl.pyplot,dist=stats.distributions.lognorm(s=1))
 #+end_src
-
-#+RESULTS:
-: ((array([ 0.03965428,  0.05157988,  0.05972275, ..., 16.74403862,
-:          19.38740395, 25.21796064], shape=(1110,)),
-:   array([0.   , 0.   , 0.   , ..., 0.063, 0.066, 0.101], shape=(1110,))),
-:  (np.float64(0.003939895241111014),
-:   np.float64(0.0005278739893580433),
-:   np.float64(0.996240234536333)))
 
 [[file:images/9cfc294ea181926dd8c3f3a056d94b07f48e2909.png]]
 
@@ -408,39 +392,38 @@ considered factors
 titanic['survived'] = titanic.Survived.astype('category')
 titanic['sex'] = titanic.Sex.astype('category')
 titanic['pclass'] = titanic.Pclass.astype('category')
-#+end_src
-
-#+begin_src python
 ct = pd.crosstab(titanic['survived'],columns=[titanic['sex'],titanic['pclass']])
-ct
+df =ct
 #+end_src
 
 #+RESULTS:
-: sex      female         male         
-: pclass        1   2   3    1   2    3
-: survived                             
-: 0             3   6  72   77  91  300
-: 1            91  70  72   45  17   47
+| ('female', '1') | ('female', '2') | ('female', '3') |
+|-----------------+-----------------+-----------------|
+| count           |            1110 |            1110 |
+| unique          |             nan |              13 |
+| top             |             nan |     Los Angeles |
+| freq            |             nan |             458 |
+| mean            |         0.00699 |             nan |
+| std             |        0.008124 |             nan |
+| min             |               0 |             nan |
+| 25%             |        0.002863 |             nan |
+| 50%             |         0.00444 |             nan |
+| 75%             |           0.008 |             nan |
+| max             |           0.101 |             nan |
 
 <<4894d57d-414c-4dc9-9c90-fefbf1e0ab44>>
 the =.plot.bar()= method provides a quick way to display this
 information as grouped bar plot
 
-#+begin_src python
+#+begin_src python :noeval
 ct.plot.bar()
 #+end_src
 
-#+RESULTS:
-: <Axes: xlabel='survived'>
-
 [[file:images/1d24d9251539adaf31f212d0a90dae8f08c90c42.png]]
 
-#+begin_src python
+#+begin_src python :noeval
 ct.plot.bar(stacked=True)
 #+end_src
-
-#+RESULTS:
-: <Axes: xlabel='survived'>
 
 [[file:images/6a211b5060db8a1a6052f4e092b775e7791ac988.png]]
 
@@ -454,16 +437,23 @@ features (sepal and petal length and width) across different varieties.
 
 #+begin_src python
 iris = pd.read_csv("iris.csv")
-iris.head()
+df =iris.head()
 #+end_src
 
 #+RESULTS:
-:    sepal_length  sepal_width  petal_length  petal_width variety
-: 0           5.1          3.5           1.4          0.2  Setosa
-: 1           4.9          3.0           1.4          0.2  Setosa
-: 2           4.7          3.2           1.3          0.2  Setosa
-: 3           4.6          3.1           1.5          0.2  Setosa
-: 4           5.0          3.6           1.4          0.2  Setosa
+| sepal_length | sepal_width | petal_length |
+|--------------+-------------+--------------|
+| count        |        1110 |         1110 |
+| unique       |         nan |           13 |
+| top          |         nan |  Los Angeles |
+| freq         |         nan |          458 |
+| mean         |     0.00699 |          nan |
+| std          |    0.008124 |          nan |
+| min          |           0 |          nan |
+| 25%          |    0.002863 |          nan |
+| 50%          |     0.00444 |          nan |
+| 75%          |       0.008 |          nan |
+| max          |       0.101 |          nan |
 
 <<10f681eb-5435-4699-963c-4c598ddfca1a>>
 *** Two variables
@@ -473,12 +463,9 @@ iris.head()
 the simplest way to look at the interaction between two of these
 features is the scatter plot
 
-#+begin_src python
+#+begin_src python :noeval
 sns.scatterplot(iris,x="sepal_length",y="sepal_width")
 #+end_src
-
-#+RESULTS:
-: <Axes: xlabel='sepal_length', ylabel='sepal_width'>
 
 [[file:images/4c419a0ca12a4e26ba41985fdfac20af73b56257.png]]
 
@@ -491,12 +478,9 @@ the same can be done with all the features in a large simmetric matrix.
 
 In the diagonal are plotted histograms of the corresponding feature
 
-#+begin_src python
+#+begin_src python :noeval
 sns.pairplot(iris)
 #+end_src
-
-#+RESULTS:
-: <seaborn.axisgrid.PairGrid at 0x297ce4b27b0>
 
 [[file:images/40e4e0e7a7353c852c5d91fb906062bb585cae19.png]]
 
@@ -528,12 +512,9 @@ category
 - if the calculated value is chosen all samples which are farther from
   the mean are plotted as dot and may be interpreted as outliers
 
-#+begin_src python
+#+begin_src python :noeval
 sns.boxplot(titanic,x="pclass",y="Age")
 #+end_src
-
-#+RESULTS:
-: <Axes: xlabel='pclass', ylabel='Age'>
 
 [[file:images/ec07ee2fc870feb9b837a8e21ba0fac0069235ca.png]]
 
@@ -544,12 +525,9 @@ distribution calculated with kernel smoothing.
 This provides more visual information than box plot but may be
 effectively used only when the number of groups is limited
 
-#+begin_src python
+#+begin_src python :noeval
 sns.violinplot(titanic,x="pclass",y="Age")
 #+end_src
-
-#+RESULTS:
-: <Axes: xlabel='pclass', ylabel='Age'>
 
 [[file:images/ffdee419bb3798d2d38b21cf42559025e5b59f8e.png]]
 
@@ -562,12 +540,9 @@ the scatter matrix can show groups from a single category using colors
 
 The seaborn version also shows kernel density distributons
 
-#+begin_src python
+#+begin_src python :noeval
 sns.pairplot(iris,hue="variety")
 #+end_src
-
-#+RESULTS:
-: <seaborn.axisgrid.PairGrid at 0x297ce6a9310>
 
 [[file:images/d434a97f3c99b61d058aae62790fa73ea533b7b4.png]]
 
@@ -582,13 +557,10 @@ define a bidimensional grid.
 A plotting function can be applied on each subset represented in a given
 cell grid
 
-#+begin_src python
+#+begin_src python :noeval
 g = sns.FacetGrid(titanic, col="sex", row='pclass')
 g.map(sns.histplot, "Age")
 #+end_src
-
-#+RESULTS:
-: <seaborn.axisgrid.FacetGrid at 0x297cbfcb620>
 
 [[file:images/8a2ea5e8dd1009fa17e54573f5038253f725ff8d.png]]
 
@@ -596,19 +568,16 @@ g.map(sns.histplot, "Age")
 interestingly this representation shows the different age distribution
 as a function of the gender and the class of passengers
 
-#+begin_src python
-#+end_src
-
-# images/04c5f7ee20b7c943d81ff65e17f36eaf85fead2b.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/04c5f7ee20b7c943d81ff65e17f36eaf85fead2b.png
-# images/1e179c2227cfbdf703d241d0bb9385b826510526.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/1e179c2227cfbdf703d241d0bb9385b826510526.png
-# images/98650be7328261cabcd95fd83a1dc52ecb101acd.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/98650be7328261cabcd95fd83a1dc52ecb101acd.png
-# images/07b8d558d22557e09c33cc108a169772832e1531.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/07b8d558d22557e09c33cc108a169772832e1531.png
-# images/9cfc294ea181926dd8c3f3a056d94b07f48e2909.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/9cfc294ea181926dd8c3f3a056d94b07f48e2909.png
-# images/1d24d9251539adaf31f212d0a90dae8f08c90c42.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/1d24d9251539adaf31f212d0a90dae8f08c90c42.png
-# images/6a211b5060db8a1a6052f4e092b775e7791ac988.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/6a211b5060db8a1a6052f4e092b775e7791ac988.png
-# images/4c419a0ca12a4e26ba41985fdfac20af73b56257.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/4c419a0ca12a4e26ba41985fdfac20af73b56257.png
-# images/40e4e0e7a7353c852c5d91fb906062bb585cae19.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/40e4e0e7a7353c852c5d91fb906062bb585cae19.png
-# images/ec07ee2fc870feb9b837a8e21ba0fac0069235ca.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/ec07ee2fc870feb9b837a8e21ba0fac0069235ca.png
-# images/ffdee419bb3798d2d38b21cf42559025e5b59f8e.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/ffdee419bb3798d2d38b21cf42559025e5b59f8e.png
-# images/d434a97f3c99b61d058aae62790fa73ea533b7b4.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/d434a97f3c99b61d058aae62790fa73ea533b7b4.png
-# images/8a2ea5e8dd1009fa17e54573f5038253f725ff8d.png https://noiseonthenet.space/noise/wp-content/uploads/2024/12/8a2ea5e8dd1009fa17e54573f5038253f725ff8d.png
+# images/04c5f7ee20b7c943d81ff65e17f36eaf85fead2b.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/04c5f7ee20b7c943d81ff65e17f36eaf85fead2b.png
+# images/1e179c2227cfbdf703d241d0bb9385b826510526.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/1e179c2227cfbdf703d241d0bb9385b826510526.png
+# images/98650be7328261cabcd95fd83a1dc52ecb101acd.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/98650be7328261cabcd95fd83a1dc52ecb101acd.png
+# images/07b8d558d22557e09c33cc108a169772832e1531.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/07b8d558d22557e09c33cc108a169772832e1531.png
+# images/9cfc294ea181926dd8c3f3a056d94b07f48e2909.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/9cfc294ea181926dd8c3f3a056d94b07f48e2909.png
+# images/1d24d9251539adaf31f212d0a90dae8f08c90c42.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/1d24d9251539adaf31f212d0a90dae8f08c90c42.png
+# images/6a211b5060db8a1a6052f4e092b775e7791ac988.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/6a211b5060db8a1a6052f4e092b775e7791ac988.png
+# images/4c419a0ca12a4e26ba41985fdfac20af73b56257.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/4c419a0ca12a4e26ba41985fdfac20af73b56257.png
+# images/40e4e0e7a7353c852c5d91fb906062bb585cae19.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/40e4e0e7a7353c852c5d91fb906062bb585cae19.png
+# images/ec07ee2fc870feb9b837a8e21ba0fac0069235ca.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/ec07ee2fc870feb9b837a8e21ba0fac0069235ca.png
+# images/ffdee419bb3798d2d38b21cf42559025e5b59f8e.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/ffdee419bb3798d2d38b21cf42559025e5b59f8e.png
+# images/d434a97f3c99b61d058aae62790fa73ea533b7b4.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/d434a97f3c99b61d058aae62790fa73ea533b7b4.png
+# images/8a2ea5e8dd1009fa17e54573f5038253f725ff8d.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/8a2ea5e8dd1009fa17e54573f5038253f725ff8d.png
