@@ -55,9 +55,12 @@ Data is grouped by
 - methan consumption
 - electricity consumption
 
+let's first load this resource usage dataset
 #+begin_src python
 cons = pd.read_csv("ds523_consumoacquaenergia.csv",sep=";")
 #+end_src
+
+We can quickly overview its content
 
 #+begin_src python
 cons.describe(include="all")
@@ -76,6 +79,9 @@ cons.describe(include="all")
 : 50%     2005.50000                                  NaN          432.900000
 : 75%     2008.25000                                  NaN         1195.650000
 : max     2011.00000                                  NaN         1228.600000
+
+It requires some cleanup: first let's check the consumption type
+
 #+begin_src python
 cons["Consumo pro capite tipo"].unique()
 #+end_src
@@ -84,6 +90,9 @@ cons["Consumo pro capite tipo"].unique()
 : array(['Energia elettrica per uso domestico',
 :        'Gas metano per uso domestico e riscaldamento',
 :        'Acqua fatturata per uso domestico'], dtype=object)
+
+Now let's translate these categories
+
 #+begin_src python
 translate = {
     'Energia elettrica per uso domestico':'electricity',
@@ -92,6 +101,8 @@ translate = {
 }
 cons["type"] = cons["Consumo pro capite tipo"].map(translate)
 #+end_src
+
+Finally we can reshape the dataset to split the different kind of resources
 
 #+begin_src python
 cons2 = cons.pivot(index="anno",columns="type",values="Consumo pro capite").reset_index()
@@ -113,15 +124,18 @@ cons2
 : 9     2009       1202.9   389.6   85.8
 : 10    2010       1200.7   406.2   83.2
 : 11    2011       1196.1   377.9   83.1
+
+Now we can make use of our scatter matrix to further investigate this dataset
+
 #+begin_src python
 import seaborn as sns
 sns.pairplot(cons2)
 #+end_src
 
-#+RESULTS:
-: <seaborn.axisgrid.PairGrid at 0x7f60241fbc20>
-
 [[file:images/b29f0e25b66fbc630eccdb1dbe9e0e331d1f4cb8.png]]
+
+Looks like there is some kind of variation of the methan usage in time: we can
+try to make a linear regression and see how it does look like
 
 #+begin_src python
 sns.regplot(cons2,x="year",y="methan")
