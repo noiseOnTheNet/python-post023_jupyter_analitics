@@ -1,12 +1,26 @@
 #+BLOG: noise on the net
 #+POSTID: 572
 #+ORG2BLOG:
-#+DATE: [2024-12-29 dom 21:57]
+#+DATE: [2025-02-16 dom 21:57]
 #+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
 #+CATEGORY: Language learning
 #+TAGS: Python
 #+DESCRIPTION:
-#+TITLE: Correlations and Linear Models
+#+TITLE: Hold the Line
+#+PROPERTY: header-args:python :noeval :exports both
+file:images/sam-goodgame-Pe5BC-EDtB4-unsplash.jpg
+Photo by [[https://unsplash.com/@sgoodgame?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Sam Goodgame]] on [[https://unsplash.com/photos/san-francisco-bridge-Pe5BC-EDtB4?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Unsplash]]
+
+We made quite a journey so far! Starting from [[https://noiseonthenet.space/noise/2025/01/a-trip-to-jupyter-lab/][Jupyter]] and [[https://noiseonthenet.space/noise/2025/01/meet-the-pandas/][Pandas]] we [[https://noiseonthenet.space/noise/2025/02/data-the-final-frontier/][explored our
+datasets]] and [[https://noiseonthenet.space/noise/2025/02/coming-back-down-to-earth/][created independent scripts]].
+
+It is now the time to learn the basics of a very powerful tool: Linear Regression.
+
+Linearity is a key concept in mathematics: it goes very far from the naive idea
+of a straight line into more abstract concepts like the independence of two
+effecs into a dynamic system.
+
+The jupyter notebooks for this series of posts are available in this [[https://github.com/noiseOnTheNet/python-post023_jupyter_analitics][Github Repo]]
 
 <<64909858-2157-4525-b5c0-dc267988e355>>
 * Correlations and linear models
@@ -26,7 +40,7 @@ given an estimation \(\hat{y} = \vec{x} \cdot \vec{\alpha}\)
 we look for the best \(\vec{\alpha}\) which minimize all residuals
 \(\epsilon(\hat{y}) = y - \hat{y}\)
 
-#+begin_src jupyter-python
+#+begin_src python
 import pandas as pd
 #+end_src
 
@@ -40,11 +54,11 @@ Data is grouped by
 - methan consumption
 - electricity consumption
 
-#+begin_src jupyter-python
+#+begin_src python
 cons = pd.read_csv("ds523_consumoacquaenergia.csv",sep=";")
 #+end_src
 
-#+begin_src jupyter-python
+#+begin_src python
 cons.describe(include="all")
 #+end_src
 
@@ -61,7 +75,7 @@ cons.describe(include="all")
 : 50%     2005.50000                                  NaN          432.900000
 : 75%     2008.25000                                  NaN         1195.650000
 : max     2011.00000                                  NaN         1228.600000
-#+begin_src jupyter-python
+#+begin_src python
 cons["Consumo pro capite tipo"].unique()
 #+end_src
 
@@ -69,7 +83,7 @@ cons["Consumo pro capite tipo"].unique()
 : array(['Energia elettrica per uso domestico',
 :        'Gas metano per uso domestico e riscaldamento',
 :        'Acqua fatturata per uso domestico'], dtype=object)
-#+begin_src jupyter-python
+#+begin_src python
 translate = {
     'Energia elettrica per uso domestico':'electricity',
     'Gas metano per uso domestico e riscaldamento':'methan',
@@ -78,7 +92,7 @@ translate = {
 cons["type"] = cons["Consumo pro capite tipo"].map(translate)
 #+end_src
 
-#+begin_src jupyter-python
+#+begin_src python
 cons2 = cons.pivot(index="anno",columns="type",values="Consumo pro capite").reset_index()
 cons2 = cons2.rename({"anno":"year"}, axis="columns")
 cons2
@@ -98,7 +112,7 @@ cons2
 : 9     2009       1202.9   389.6   85.8
 : 10    2010       1200.7   406.2   83.2
 : 11    2011       1196.1   377.9   83.1
-#+begin_src jupyter-python
+#+begin_src python
 import seaborn as sns
 sns.pairplot(cons2)
 #+end_src
@@ -108,7 +122,7 @@ sns.pairplot(cons2)
 
 [[file:images/a30a601a27790b4a69e3dda7196cb228ce860a20.png]]
 
-#+begin_src jupyter-python
+#+begin_src python
 sns.regplot(cons2,x="year",y="methan")
 #+end_src
 
@@ -146,7 +160,7 @@ represent positive and negative correlation respectively; this gives us
 a first estimation of the possible linear dependecies within a set of
 observation features
 
-#+begin_src jupyter-python
+#+begin_src python
 import numpy as np
 # numpy expects a matrix where each feature is in a row instead of a column
 # thus we need to transpose it
@@ -163,7 +177,7 @@ np.corrcoef(np.transpose(np.array(cons2)))
 we can see that the negative correlation between year and methan is
 about -0.9 which makes it a good candidate for a linear correlation
 
-#+begin_src jupyter-python
+#+begin_src python
 from scipy import stats
 #+end_src
 
@@ -179,7 +193,7 @@ in this simple case we have
   [[https://en.wikipedia.org/wiki/Ordinary_least_squares][Ordinary Least
   Squares regression method]] to evaluate the best fit
 
-#+begin_src jupyter-python
+#+begin_src python
 result = stats.linregress(x=cons2.year, y=cons2.methan)
 result
 #+end_src
@@ -196,7 +210,7 @@ first two:
 
 allows us to write a simple prediction formula
 
-#+begin_src jupyter-python
+#+begin_src python
 def predict_methan(year):
     return result.slope * year + result.intercept
 #+end_src
@@ -204,12 +218,12 @@ def predict_methan(year):
 <<455cf468-485c-4d2b-a9f1-1b6d9619c0d7>>
 with this formula we can build a chart of our linear regression
 
-#+begin_src jupyter-python
+#+begin_src python
 import matplotlib.pyplot as plt
 import seaborn as sns
 #+end_src
 
-#+begin_src jupyter-python
+#+begin_src python
 # create a plot canvas
 fig, ax = plt.subplots(1,1)
 
@@ -222,9 +236,6 @@ year1 = max(cons2.year)
 ax.plot((year0,year1),(predict_methan(year0),predict_methan(year1)))
 #+end_src
 
-#+RESULTS:
-: [<matplotlib.lines.Line2D at 0x2204c732350>]
-
 [[file:images/97bfa3f43f44e8056f8bf8face7fc9f0482200dd.png]]
 
 <<900888fc-d76d-4255-80ab-60b36ea1230a>>
@@ -232,12 +243,12 @@ note: the polymorphism allows to properly use the prodict_methan
 function also with pandas Series
 
 <<ad02f23d-905d-4f37-ad4a-3942e8a59b52>>
-** Assessing the qaulity of a regression
+** Assessing the quality of a regression
 :PROPERTIES:
 :CUSTOM_ID: assessing-the-qaulity-of-a-regression
 :END:
 
-#+begin_src jupyter-python
+#+begin_src python
 residuals = cons2.methan - predict_methan(cons2.year)
 #+end_src
 
@@ -248,7 +259,7 @@ features under investigation.
 
 In our example looks like there is no apparent pattern
 
-#+begin_src jupyter-python
+#+begin_src python
 sns.scatterplot(x=cons2.year, y=residuals)
 #+end_src
 

@@ -1,9 +1,23 @@
 #+BLOG: noise on the net
 #+POSTID: 572
 #+ORG2BLOG:
-#+DATE: [2024-12-29 dom 21:57]
+#+DATE: [2025-02-16 dom 21:57]
 #+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
 #+CATEGORY: Language learning
 #+TAGS: Python
 #+DESCRIPTION:
-#+TITLE: Correlations and Linear Models
+#+TITLE: Hold the Line
+#+PROPERTY: header-args:python :noeval :exports both
+file:images/sam-goodgame-Pe5BC-EDtB4-unsplash.jpg
+Photo by [[https://unsplash.com/@sgoodgame?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Sam Goodgame]] on [[https://unsplash.com/photos/san-francisco-bridge-Pe5BC-EDtB4?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Unsplash]]
+
+We made quite a journey so far! Starting from [[https://noiseonthenet.space/noise/2025/01/a-trip-to-jupyter-lab/][Jupyter]] and [[https://noiseonthenet.space/noise/2025/01/meet-the-pandas/][Pandas]] we [[https://noiseonthenet.space/noise/2025/02/data-the-final-frontier/][explored our
+datasets]] and [[https://noiseonthenet.space/noise/2025/02/coming-back-down-to-earth/][created independent scripts]].
+
+It is now the time to learn the basics of a very powerful tool: Linear Regression.
+
+Linearity is a key concept in mathematics: it goes very far from the naive idea
+of a straight line into more abstract concepts like the independence of two
+effecs into a dynamic system.
+
+The jupyter notebooks for this series of posts are available in this [[https://github.com/noiseOnTheNet/python-post023_jupyter_analitics][Github Repo]]
