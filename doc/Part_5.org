@@ -20,7 +20,8 @@ Linearity is a key concept in mathematics: it goes very far from the naive idea
 of a straight line into more abstract concepts like the independence of two
 effecs into a dynamic system.
 
-The jupyter notebooks for this series of posts are available in this [[https://github.com/noiseOnTheNet/python-post023_jupyter_analitics][Github Repo]]
+The jupyter notebooks for this series of posts, the datasets, their source and
+their attribution are available in this [[https://github.com/noiseOnTheNet/python-post023_jupyter_analitics][Github Repo]]
 
 <<64909858-2157-4525-b5c0-dc267988e355>>
 * Correlations and linear models
@@ -236,9 +237,6 @@ year0 = min(cons2.year)
 year1 = max(cons2.year)
 ax.plot((year0,year1),(predict_methan(year0),predict_methan(year1)))
 #+end_src
-
-#+RESULTS:
-: [<matplotlib.lines.Line2D at 0x7f601fa3a420>]
 
 [[file:images/17438532d1c01292d94bc1d9411c8245ebaacac2.png]]
 
@@ -572,11 +570,6 @@ of information; most notably
 :END:
 it is also important to not blindly accept the result of a regression
 without a further analysis of the dataset
-
-#+begin_src python
-import matplotlib.pyplot as mpl
-import seaborn as sns
-#+end_src
 
 <<81caf0ab-c3d9-4354-ade8-e306bed35755>>
 In the following code I will check how the output variable depends on
@@ -919,11 +912,17 @@ import requests
 import pandas as pd
 #+end_src
 
+Let's create the nonlinear feature columns for a polynomial of degree 3. The
+higher the degree the lower the error: choosing an excessively large degree can
+lead to overfitting without adding much more insight
+
 #+begin_src python
 fin_italy_valued["dy"] = fin_italy_valued.year - min(fin_italy_valued.year)
 fin_italy_valued["dy2"] = fin_italy_valued.dy ** 2
 fin_italy_valued["dy3"] = fin_italy_valued.dy ** 3
 #+end_src
+
+now we can fit and get the coefficients for these features
 
 #+begin_src python
 model = smf.ols("di01 ~ dy + dy2 + dy3",fin_italy_valued)
@@ -963,6 +962,11 @@ regression.summary()
 : [2] The condition number is large, 2.84e+05. This might indicate that there are
 : strong multicollinearity or other numerical problems.
 : """
+
+The \(R^2\) value improved from .39 to .59
+
+Here are our coefficients: the third degree adds very little contribution
+
 #+begin_src python
 regression.params
 #+end_src
@@ -973,26 +977,13 @@ regression.params
 : dy2           0.061431
 : dy3          -0.000417
 : dtype: float64
+
+With them we can now plot the polynomial and verify the new fit
 #+begin_src python
 fin_italy_valued["predicted"] = regression.params[0] + \
     regression.params[1] * fin_italy_valued.dy + \
     regression.params[2] * fin_italy_valued.dy2 + \
     regression.params[3] * fin_italy_valued.dy3
-#+end_src
-
-#+begin_example
-/tmp/ipykernel_36146/84188653.py:1: FutureWarning: Series.__getitem__ treating keys as positions is deprecated. In a future version, integer keys will always be treated as labels (consistent with DataFrame behavior). To access a value by position, use `ser.iloc[pos]`
-  fin_italy_valued["predicted"] = regression.params[0] + \
-/tmp/ipykernel_36146/84188653.py:2: FutureWarning: Series.__getitem__ treating keys as positions is deprecated. In a future version, integer keys will always be treated as labels (consistent with DataFrame behavior). To access a value by position, use `ser.iloc[pos]`
-  regression.params[1] * fin_italy_valued.dy + \
-/tmp/ipykernel_36146/84188653.py:3: FutureWarning: Series.__getitem__ treating keys as positions is deprecated. In a future version, integer keys will always be treated as labels (consistent with DataFrame behavior). To access a value by position, use `ser.iloc[pos]`
-  regression.params[2] * fin_italy_valued.dy2 + \
-/tmp/ipykernel_36146/84188653.py:4: FutureWarning: Series.__getitem__ treating keys as positions is deprecated. In a future version, integer keys will always be treated as labels (consistent with DataFrame behavior). To access a value by position, use `ser.iloc[pos]`
-  regression.params[3] * fin_italy_valued.dy3
-#+end_example
-
-#+begin_src python
-import matplotlib.pyplot as plt
 #+end_src
 
 #+begin_src python
@@ -1001,13 +992,9 @@ sns.scatterplot(data=fin_italy_valued,x="year",y="di01", ax=ax)
 sns.lineplot(data=fin_italy_valued,x="year",y="predicted", ax=ax)
 #+end_src
 
-#+RESULTS:
-: <Axes: xlabel='year', ylabel='di01'>
-
 [[file:images/623a675dc051431286d08cc57c923acaf8fce7d0.png]]
 
 <<cb429118-2a73-436a-a4cc-0fb49e4dc10e>>
-The \(R^2\) value improved from .39 to .59
 
 #+begin_src python
 #+end_src

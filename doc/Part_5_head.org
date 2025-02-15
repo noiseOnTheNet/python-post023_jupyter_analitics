@@ -20,4 +20,5 @@ Linearity is a key concept in mathematics: it goes very far from the naive idea
 of a straight line into more abstract concepts like the independence of two
 effecs into a dynamic system.
 
-The jupyter notebooks for this series of posts are available in this [[https://github.com/noiseOnTheNet/python-post023_jupyter_analitics][Github Repo]]
+The jupyter notebooks for this series of posts, the datasets, their source and
+their attribution are available in this [[https://github.com/noiseOnTheNet/python-post023_jupyter_analitics][Github Repo]]
