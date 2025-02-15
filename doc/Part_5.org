@@ -118,9 +118,9 @@ sns.pairplot(cons2)
 #+end_src
 
 #+RESULTS:
-: <seaborn.axisgrid.PairGrid at 0x220423dea50>
+: <seaborn.axisgrid.PairGrid at 0x7f60241fbc20>
 
-[[file:images/a30a601a27790b4a69e3dda7196cb228ce860a20.png]]
+[[file:images/b29f0e25b66fbc630eccdb1dbe9e0e331d1f4cb8.png]]
 
 #+begin_src python
 sns.regplot(cons2,x="year",y="methan")
@@ -129,7 +129,7 @@ sns.regplot(cons2,x="year",y="methan")
 #+RESULTS:
 : <Axes: xlabel='year', ylabel='methan'>
 
-[[file:images/d1ecfa3b30467fa96fda8febbffe60b0c3718c5a.png]]
+[[file:images/27bb1e3606cc5a352a90cee654ce719aa4ad5982.png]]
 
 <<679fb861-865c-466e-b0f7-2806a5ffcafb>>
 ** Covariance and correlation
@@ -144,8 +144,9 @@ matrix]], defined as
 is the multidimensional extension of the variance, elements of the
 diagonal being the variance of the corrisponding dimension; its
 eigenvectors define an ellipsoid representing the most important
-combinations of the dimensional features; this is used in Principal
-Compaonent Analysis, a technique which helps to define the most
+combinations of the dimensional features; this is used in
+[[https://en.wikipedia.org/wiki/Principal_component_analysis][Principal
+Compaonent Analysis]], a technique which helps to define the most
 impactful features.
 
 By dividing each element with the product of the standard deviations we
@@ -158,7 +159,7 @@ The elements outside the diagonal are numbers between -1 and 1; 0
 represents no correlation (like a spherical cloud) while 1 and -1
 represent positive and negative correlation respectively; this gives us
 a first estimation of the possible linear dependecies within a set of
-observation features
+observation features;
 
 #+begin_src python
 import numpy as np
@@ -199,7 +200,7 @@ result
 #+end_src
 
 #+RESULTS:
-: LinregressResult(slope=np.float64(-13.141258741258738), intercept=np.float64(26791.62773892773), rvalue=np.float64(-0.9354831530794605), pvalue=np.float64(7.894692952340761e-06), stderr=np.float64(1.5697563928623894), intercept_stderr=np.float64(3148.151109622701))
+: LinregressResult(slope=np.float64(-13.141258741258738), intercept=np.float64(26791.62773892773), rvalue=np.float64(-0.9354831530794605), pvalue=np.float64(7.894692952340763e-06), stderr=np.float64(1.5697563928623894), intercept_stderr=np.float64(3148.151109622701))
 
 <<b0e77a9c-05d4-499c-9b3f-af3d4ecc6039>>
 the returned object contains some interesting values; let's check the
@@ -236,7 +237,10 @@ year1 = max(cons2.year)
 ax.plot((year0,year1),(predict_methan(year0),predict_methan(year1)))
 #+end_src
 
-[[file:images/97bfa3f43f44e8056f8bf8face7fc9f0482200dd.png]]
+#+RESULTS:
+: [<matplotlib.lines.Line2D at 0x7f601fa3a420>]
+
+[[file:images/17438532d1c01292d94bc1d9411c8245ebaacac2.png]]
 
 <<900888fc-d76d-4255-80ab-60b36ea1230a>>
 note: the polymorphism allows to properly use the prodict_methan
@@ -260,13 +264,15 @@ features under investigation.
 In our example looks like there is no apparent pattern
 
 #+begin_src python
-sns.scatterplot(x=cons2.year, y=residuals)
+ax = sns.scatterplot(x=cons2.year, y=residuals)
+ax.plot((year0,year1),(0,0))
+ax.set_ylabel("residuals")
 #+end_src
 
 #+RESULTS:
-: <Axes: xlabel='year', ylabel='None'>
+: Text(0, 0.5, 'residuals')
 
-[[file:images/6d66ee4c83a50c1f8dc3abc03acc9ef01342525b.png]]
+[[file:images/2c93d21ae555706ae42752463532625d02c13d58.png]]
 
 <<5c2ead8b-5836-430d-b740-6debee27bacd>>
 The next step would be to assess the variance of residuals respect to
@@ -296,6 +302,714 @@ represent the fraction of the variance of the original dataset explained
 by the linear relation: this is a real number between 0 and 1 where 0
 represents no actual explaination (i.e. the mean has the same prediction
 power) to 1 representing all the relation is explained
+
+<<6718617e-6399-4871-9602-8c5cf99e02a3>>
+** Multiple input parameters
+:PROPERTIES:
+:CUSTOM_ID: multiple-input-parameters
+:END:
+in order to perform this regression with multiple inputs we are going to
+use the =statmodels= library (see
+[[https://www.statsmodels.org/stable/index.html][documentation]])
+
+Execute the following cell only the first time
+
+#+begin_src python
+!pip install statsmodels
+#+end_src
+
+#+begin_src python
+import statsmodels as sm
+from statsmodels.api import formula as smf
+import requests
+import pandas as pd
+#+end_src
+
+<<9b28ce16-ddea-4879-befd-9dbdb9593f5e>>
+We will use a crime dataset from UCLA
+
+#+begin_src python
+headers = "crimerat maleteen south educ police60 police59 labor  males pop nonwhite unemp1  unemp2 median belowmed".split()
+crime = pd.read_csv(
+    "https://stats.idre.ucla.edu/wp-content/uploads/2016/02/crime.txt",
+    sep=r"\s+",
+    names=headers,
+    dtype=float
+)
+#+end_src
+
+<<56cb36df-171c-4210-b3f6-f919cea4783f>>
+This is the description of the content of this table |Columns | meaning|
+​|--------|--------| |CrimeRat| Crime rate: # of offenses reported to
+police per million population |MaleTeen| The number of males of age
+14-24 per 1000 population |South | Indicator variable for Southern
+states (0 = No, 1 = Yes) |Educ | Mean # of years of schooling for
+persons of age 25 or older |Police60| 1960 per capita expenditure on
+police by state and local government |Police59| 1959 per capita
+expenditure on police by state and local government |Labor | Labor force
+participation rate per 1000 civilian urban males age 14-24 |Males | The
+number of males per 1000 females |Pop | State population size in hundred
+thousands |NonWhite| The number of non-whites per 1000 population
+​|Unemp1 | Unemployment rate of urban males per 1000 of age 14-24 |Unemp2
+​| Unemployment rate of urban males per 1000 of age 35-39 |Median |
+Median value of transferable goods and assets or family income in tens
+of $ |BelowMed| The number of families per 1000 earning below 1/2 the
+median income
+
+#+begin_src python
+crime.head()
+#+end_src
+
+#+RESULTS:
+:    crimerat  maleteen  south  educ  police60  police59  labor   males    pop  \
+: 0      79.1     151.0    1.0   9.1      58.0      56.0  510.0   950.0   33.0   
+: 1     163.5     143.0    0.0  11.3     103.0      95.0  583.0  1012.0   13.0   
+: 2      57.8     142.0    1.0   8.9      45.0      44.0  533.0   969.0   18.0   
+: 3     196.9     136.0    0.0  12.1     149.0     141.0  577.0   994.0  157.0   
+: 4     123.4     141.0    0.0  12.1     109.0     101.0  591.0   985.0   18.0   
+:    nonwhite  unemp1  unemp2  median  belowmed  
+: 0     301.0   108.0    41.0   394.0     261.0  
+: 1     102.0    96.0    36.0   557.0     194.0  
+: 2     219.0    94.0    33.0   318.0     250.0  
+: 3      80.0   102.0    39.0   673.0     167.0  
+: 4      30.0    91.0    20.0   578.0     174.0  
+
+<<ca1a0286-557e-4b90-8f64-d51ca9a6379d>>
+The =south= feature is actually categorical and cannot be treated in the
+same way as others but let's pretend it is not different for this
+exercise
+
+#+begin_src python
+crime.describe()
+#+end_src
+
+#+RESULTS:
+:          crimerat    maleteen      south      educ    police60    police59  \
+: count   47.000000   47.000000  47.000000  47.00000   47.000000   47.000000   
+: mean    90.508511  138.574468   0.340426  10.56383   85.000000   80.234043   
+: std     38.676270   12.567634   0.478975   1.11870   29.718974   27.961319   
+: min     34.200000  119.000000   0.000000   8.70000   45.000000   41.000000   
+: 25%     65.850000  130.000000   0.000000   9.75000   62.500000   58.500000   
+: 50%     83.100000  136.000000   0.000000  10.80000   78.000000   73.000000   
+: 75%    105.750000  146.000000   1.000000  11.45000  104.500000   97.000000   
+: max    199.300000  177.000000   1.000000  12.20000  166.000000  157.000000   
+:             labor        males         pop    nonwhite      unemp1     unemp2  \
+: count   47.000000    47.000000   47.000000   47.000000   47.000000  47.000000   
+: mean   561.191489   983.021277   36.617021  101.127660   95.468085  33.978723   
+: std     40.411814    29.467365   38.071188  102.828819   18.028783   8.445450   
+: min    480.000000   934.000000    3.000000    2.000000   70.000000  20.000000   
+: 25%    530.500000   964.500000   10.000000   24.000000   80.500000  27.500000   
+: 50%    560.000000   977.000000   25.000000   76.000000   92.000000  34.000000   
+: 75%    593.000000   992.000000   41.500000  132.500000  104.000000  38.500000   
+: max    641.000000  1071.000000  168.000000  423.000000  142.000000  58.000000   
+:            median    belowmed  
+: count   47.000000   47.000000  
+: mean   525.382979  194.000000  
+: std     96.490944   39.896061  
+: min    288.000000  126.000000  
+: 25%    459.500000  165.500000  
+: 50%    537.000000  176.000000  
+: 75%    591.500000  227.500000  
+: max    689.000000  276.000000  
+
+<<1a5daec8-e7db-424a-866b-4f99dd6ae73e>>
+Note that there are some very skewed distributions like the non white
+which has a very large standard deviation respect to the mean; this
+value also shows a long queue according to the percentiles.
+
+Moreover, due to their definitions some features have very different
+ranges.
+
+This may have an impact in evaluating the eigenvectors as some
+dimensions may appear as more relevant then others due to their scale.
+
+For these reasons we may expect that renormalizing all distributions
+respect to their standard deviation may change our findings.
+
+<<7b9d4dd8-2bd7-4578-93a2-8120032b9426>>
+*** Evaluating correlations and covariance
+:PROPERTIES:
+:CUSTOM_ID: evaluating-correlations-and-covariance
+:END:
+
+#+begin_src python
+import numpy as np
+crime_array = np.transpose(np.array(crime))
+covariance = np.cov(crime_array)
+correlation = np.corrcoef(crime_array)
+pd.DataFrame({"correlation":correlation[0,1:],"features":headers[1:]})
+#+end_src
+
+#+RESULTS:
+:     correlation  features
+: 0     -0.089472  maleteen
+: 1     -0.090637     south
+: 2      0.322835      educ
+: 3      0.687604  police60
+: 4      0.666714  police59
+: 5      0.188866     labor
+: 6      0.213914     males
+: 7      0.337474       pop
+: 8      0.032599  nonwhite
+: 9     -0.050478    unemp1
+: 10     0.177321    unemp2
+: 11     0.441320    median
+: 12    -0.179024  belowmed
+
+<<fd442845-7060-41ba-a128-b0bb7589a74a>>
+apparently the crime rate most relevant correlation seems to be the
+increase in police expenditure which may probably be more a consequence
+than a causation
+
+#+begin_src python
+from numpy.linalg._linalg import EigResult
+# eigenvectors will be returned already sorted from the most to the least relevant
+result :EigResult = np.linalg.eig(covariance)
+
+def relevant(headers: [str], result: EigResult, rank: int):
+    """retruns the features of the rank-th eigenvalue sorted from the largest descending"""
+    # extract the rank-th eigenvector
+    vector = result.eigenvectors[:,rank] 
+    # square it to get rid of sign
+    vector_sq = vector * vector
+    # get the order from smallest to largest
+    order = vector_sq.argsort()
+    # reverse order and return the features from the most relevant
+    return [headers[int(i)] for i in reversed(order)]
+#+end_src
+
+<<917d30a0-a437-4d51-8222-c590a7c71f6b>>
+let's grab the 5 most relevant set of features
+
+#+begin_src python
+for i in range(5):
+    print(relevant(headers, result, i))
+#+end_src
+
+#+begin_example
+['nonwhite', 'median', 'belowmed', 'police60', 'police59', 'labor', 'crimerat', 'maleteen', 'males', 'pop', 'unemp1', 'educ', 'south', 'unemp2']
+['nonwhite', 'median', 'crimerat', 'pop', 'police60', 'police59', 'males', 'belowmed', 'labor', 'unemp1', 'unemp2', 'maleteen', 'south', 'educ']
+['labor', 'males', 'pop', 'crimerat', 'nonwhite', 'belowmed', 'maleteen', 'unemp2', 'unemp1', 'police59', 'educ', 'police60', 'median', 'south']
+['pop', 'crimerat', 'median', 'belowmed', 'nonwhite', 'labor', 'police60', 'police59', 'males', 'unemp1', 'unemp2', 'maleteen', 'educ', 'south']
+['labor', 'crimerat', 'pop', 'males', 'unemp1', 'unemp2', 'belowmed', 'police60', 'nonwhite', 'police59', 'median', 'maleteen', 'south', 'educ']
+#+end_example
+
+<<de67a341-98b1-4703-b995-667cb674e475>>
+*** Performing regression from multiple inputs
+:PROPERTIES:
+:CUSTOM_ID: performing-regression-from-multiple-inputs
+:END:
+In the following multilinear correlation we construct a formula
+representing the features which may impact to the expected output
+
+#+begin_example
+output ~ feature1 + feature2 + feature3
+#+end_example
+
+I chose to use all of the features which appear as most relevant in the
+first eigenvector and appear before our output
+
+#+begin_src python
+formula = "crimerat ~ "+ (" + ".join(relevant(headers, result, 0)[:6]))
+print(formula)
+model = smf.ols(formula,crime)
+regression = model.fit()
+regression.summary()
+#+end_src
+
+#+begin_example
+crimerat ~ nonwhite + median + belowmed + police60 + police59 + labor
+#+end_example
+
+#+RESULTS:
+: <class 'statsmodels.iolib.summary.Summary'>
+: """
+:                             OLS Regression Results                            
+: ==============================================================================
+: Dep. Variable:               crimerat   R-squared:                       0.638
+: Model:                            OLS   Adj. R-squared:                  0.584
+: Method:                 Least Squares   F-statistic:                     11.75
+: Date:                Sun, 05 Jan 2025   Prob (F-statistic):           1.48e-07
+: Time:                        21:48:11   Log-Likelihood:                -214.10
+: No. Observations:                  47   AIC:                             442.2
+: Df Residuals:                      40   BIC:                             455.2
+: Df Model:                           6                                         
+: Covariance Type:            nonrobust                                         
+: ==============================================================================
+:                  coef    std err          t      P>|t|      [0.025      0.975]
+: ------------------------------------------------------------------------------
+: Intercept   -304.9695     96.968     -3.145      0.003    -500.950    -108.989
+: nonwhite       0.0050      0.056      0.088      0.930      -0.109       0.119
+: median         0.1588      0.112      1.419      0.164      -0.067       0.385
+: belowmed       0.6875      0.223      3.085      0.004       0.237       1.138
+: police60       1.3928      1.140      1.222      0.229      -0.910       3.696
+: police59      -0.3685      1.239     -0.297      0.768      -2.872       2.135
+: labor          0.1592      0.100      1.594      0.119      -0.043       0.361
+: ==============================================================================
+: Omnibus:                        2.339   Durbin-Watson:                   2.004
+: Prob(Omnibus):                  0.311   Jarque-Bera (JB):                1.581
+: Skew:                          -0.436   Prob(JB):                        0.454
+: Kurtosis:                       3.220   Cond. No.                     2.16e+04
+: ==============================================================================
+: Notes:
+: [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+: [2] The condition number is large, 2.16e+04. This might indicate that there are
+: strong multicollinearity or other numerical problems.
+: """
+
+<<2db599df-add9-4477-90db-c81ef7a43db0>>
+The result of the fit method which is shown here above displays a wealth
+of information; most notably
+
+- some quality evaluation of the regression e.g. \(R^2\)
+- all the evaluated parameters and the intercept
+
+<<f52dc5ef-0bff-44fe-996c-f6eb1d25e65d>>
+*** Exploring features
+:PROPERTIES:
+:CUSTOM_ID: exploring-features
+:END:
+it is also important to not blindly accept the result of a regression
+without a further analysis of the dataset
+
+#+begin_src python
+import matplotlib.pyplot as mpl
+import seaborn as sns
+#+end_src
+
+<<81caf0ab-c3d9-4354-ade8-e306bed35755>>
+In the following code I will check how the output variable depends on
+the features we examined; as this plot does not really show the
+interdipendence of all features some images may be difficult to
+interpret
+
+#+begin_src python
+fig, axs = mpl.subplots(1,6,sharey=True,figsize=(18,3))
+features = relevant(headers, result, 0)[:6]
+for i in range(6):
+    sns.scatterplot(x=crime[features[i]],y=crime.crimerat,ax=axs[i])
+#+end_src
+
+[[file:images/7bf15c2d5162ced64037199385e5dbd9f6e0502f.png]]
+
+<<2a325127-3a65-4e38-bc10-c7dd058eff27>>
+*** Correcting eigenvector bias with correlation matrix
+:PROPERTIES:
+:CUSTOM_ID: correcting-eigenvector-bias-with-correlation-matrix
+:END:
+by using the correlation instead of the covariance, the range of all
+features is normalized now between -1 and 1
+
+As we can see the most interesting eigenvectors change
+
+#+begin_src python
+result2 = np.linalg.eig(correlation)
+#+end_src
+
+#+begin_src python
+for i in range(5):
+    print(relevant(headers, result2, i))
+#+end_src
+
+#+begin_example
+['median', 'belowmed', 'educ', 'police59', 'police60', 'south', 'maleteen', 'nonwhite', 'crimerat', 'labor', 'males', 'pop', 'unemp1', 'unemp2']
+['pop', 'labor', 'unemp2', 'males', 'police60', 'police59', 'nonwhite', 'crimerat', 'south', 'educ', 'median', 'belowmed', 'unemp1', 'maleteen']
+['unemp1', 'unemp2', 'labor', 'maleteen', 'crimerat', 'males', 'nonwhite', 'police59', 'police60', 'pop', 'south', 'educ', 'belowmed', 'median']
+['males', 'crimerat', 'maleteen', 'labor', 'nonwhite', 'belowmed', 'unemp1', 'pop', 'south', 'unemp2', 'police60', 'police59', 'educ', 'median']
+['pop', 'labor', 'belowmed', 'south', 'maleteen', 'police59', 'median', 'police60', 'unemp2', 'educ', 'unemp1', 'nonwhite', 'crimerat', 'males']
+#+end_example
+
+#+begin_src python
+rank_no = 0
+features_count = 8
+formula = "crimerat ~ "+ (" + ".join(relevant(headers, result2, rank_no)[:features_count]))
+print(formula)
+model = smf.ols(formula,crime)
+regression = model.fit()
+regression.summary()
+#+end_src
+
+#+begin_example
+crimerat ~ median + belowmed + educ + police59 + police60 + south + maleteen + nonwhite
+#+end_example
+
+#+RESULTS:
+: <class 'statsmodels.iolib.summary.Summary'>
+: """
+:                             OLS Regression Results                            
+: ==============================================================================
+: Dep. Variable:               crimerat   R-squared:                       0.730
+: Model:                            OLS   Adj. R-squared:                  0.673
+: Method:                 Least Squares   F-statistic:                     12.82
+: Date:                Sat, 04 Jan 2025   Prob (F-statistic):           1.02e-08
+: Time:                        21:27:44   Log-Likelihood:                -207.24
+: No. Observations:                  47   AIC:                             432.5
+: Df Residuals:                      38   BIC:                             449.1
+: Df Model:                           8                                         
+: Covariance Type:            nonrobust                                         
+: ==============================================================================
+:                  coef    std err          t      P>|t|      [0.025      0.975]
+: ------------------------------------------------------------------------------
+: Intercept   -537.5940    108.276     -4.965      0.000    -756.786    -318.402
+: median         0.1764      0.101      1.740      0.090      -0.029       0.382
+: belowmed       0.8438      0.211      3.994      0.000       0.416       1.271
+: educ          14.4615      5.068      2.853      0.007       4.201      24.722
+: police59      -0.8715      1.099     -0.793      0.433      -3.096       1.353
+: police60       1.8952      1.015      1.868      0.069      -0.159       3.949
+: south         -1.9020     12.426     -0.153      0.879     -27.057      23.253
+: maleteen       0.9286      0.379      2.451      0.019       0.161       1.696
+: nonwhite      -0.0025      0.060     -0.041      0.967      -0.124       0.119
+: ==============================================================================
+: Omnibus:                        0.285   Durbin-Watson:                   1.792
+: Prob(Omnibus):                  0.867   Jarque-Bera (JB):                0.010
+: Skew:                          -0.016   Prob(JB):                        0.995
+: Kurtosis:                       3.064   Cond. No.                     2.02e+04
+: ==============================================================================
+: Notes:
+: [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+: [2] The condition number is large, 2.02e+04. This might indicate that there are
+: strong multicollinearity or other numerical problems.
+: """
+
+<<2b9143a3-452c-46bf-9372-352523726a03>>
+Interestingly this correlation shows a better \(R^2\) than the previous
+one thus demonstrating the effectiveness of using normalized
+distributions
+
+#+begin_src python
+rank_no = 0
+features_count = 8
+fig, axs = mpl.subplots(1,features_count,sharey=True,figsize=(features_count * 3,3))
+features = relevant(headers, result2, 0)[:features_count]
+for i in range(features_count):
+    sns.scatterplot(x=crime[features[i]],y=crime.crimerat,ax=axs[i])
+#+end_src
+
+[[file:images/6f91bad8d5ed8c17c2d3d73df1bb6af39a6066b6.png]]
+
+<<b24289b2-8f1a-4de9-89a9-49420151a6dc>>
+*** More visualization of the correlations
+:PROPERTIES:
+:CUSTOM_ID: more-visualization-of-the-correlations
+:END:
+in the following examples I will show a couple of scatter plots of the
+most relevant features and use colors for the output variable; while
+this visualization does not add a great insight, nonetheless can raise
+interesting questions about the mutual connections of the features
+
+#+begin_src python
+sns.scatterplot(x=crime.belowmed,y=crime["median"],hue=crime.crimerat)
+#+end_src
+
+#+RESULTS:
+: <Axes: xlabel='belowmed', ylabel='median'>
+
+[[file:images/2703fe16dfa3b194b2581af121e89a578dfbbc5f.png]]
+
+<<6b15d2c5-3d34-41dd-bbb9-82ecf9dfd39d>>
+This image shows that some of the highest crime rate seems to show in an
+area where economic indicators seems more favorable, which just
+demonstrates how complex and controversial this analysis may be:
+deciding which features to include may have important consequences.
+
+A 3d version of the same plot adding the education feature
+
+#+begin_src python
+#sns.scatterplot(x=crime.belowmed,y=crime["median"],hue=crime.crimerat)
+from mpl_toolkits.mplot3d import Axes3D
+sns.set_style("whitegrid", {'axes.grid' : False})
+
+fig = plt.figure()
+
+ax = Axes3D(fig) 
+fig.add_axes(ax)
+x=crime.belowmed
+y=crime["median"]
+z=crime.educ
+
+ax.scatter(x, y, z, c=crime.crimerat, marker='o')
+ax.set_xlabel('belowmed')
+ax.set_ylabel('median')
+ax.set_zlabel('educ')
+ax
+#+end_src
+
+#+RESULTS:
+: <Axes3D: xlabel='belowmed', ylabel='median', zlabel='educ'>
+
+[[file:images/3854155072a7f2c4eada3d14780607169b44cf4b.png]]
+
+<<4f266861-3b6e-4bba-b661-b3bd748edcfd>>
+** Non-Linear features
+:PROPERTIES:
+:CUSTOM_ID: non-linear-features
+:END:
+the linearity of linear models is defined by the interaction between
+different features but this may be used in with non linear cases e.g.
+trying to fit a polynomial model
+
+#+begin_src python
+# this library is used to read excel files
+!pip install openpyxl
+#+end_src
+
+#+begin_src python
+import pandas as pd
+#+end_src
+
+<<766b5c11-d0d7-42f7-8773-ccb197ee5075>>
+The following dataset describes financial performances metrics across
+many countries
+
+#+begin_src python
+financial = pd.read_excel("20220909-global-financial-development-database.xlsx",sheet_name="Data - August 2022")
+#+end_src
+
+<<1024b788-0ace-4030-9ceb-c3aa4814f3e8>>
+let's first set some attributes as categorical: we may use them
+eventually as a filter
+
+#+begin_src python
+for col in ["iso3", "iso2", "imfn", "country", "region", "income"]:
+    financial[col] = financial[col].astype("category")
+#+end_src
+
+<<5bb74560-91c3-41ee-af17-6ed5abd7f5f5>>
+In this example we will focus on a particular financial metric =di01=
+
+#+begin_src python
+financial[["country","region","di01"]].describe(include="all")
+#+end_src
+
+#+RESULTS:
+:             country                 region         di01
+: count         13268                  13268  8594.000000
+: unique          214                      7          NaN
+: top     Afghanistan  Europe & Central Asia          NaN
+: freq             62                   3596          NaN
+: mean            NaN                    NaN    37.321250
+: std             NaN                    NaN    34.811684
+: min             NaN                    NaN     0.010371
+: 25%             NaN                    NaN    13.054380
+: 50%             NaN                    NaN    26.018790
+: 75%             NaN                    NaN    50.293530
+: max             NaN                    NaN   304.574500
+#+begin_src python
+import seaborn as sns
+#+end_src
+
+#+begin_src python
+sns.scatterplot(financial,x="year",y="di01",hue="region")
+#+end_src
+
+#+RESULTS:
+: <Axes: xlabel='year', ylabel='di01'>
+
+[[file:images/2122593c0bf7ff090cb10fdfb1ac3e8efe2318db.png]]
+
+<<c26dc5ca-a407-434a-825a-2bd52826caee>>
+Let's first narrow it to a single country and show its dependency from
+time
+
+#+begin_src python
+fin_italy = financial.loc[financial["country"]=="Italy",:]
+sns.scatterplot(fin_italy,x="year",y="di01")
+#+end_src
+
+#+RESULTS:
+: <Axes: xlabel='year', ylabel='di01'>
+
+[[file:images/c12d07712f919017f1734505751d4b3a2a05d72c.png]]
+
+<<b25f8acb-d832-4986-bcb0-d225cd84431d>>
+This shows some kind of growing trend: let's first try a simple linear
+regression respect to the years
+
+#+begin_src python
+sns.regression.regplot(fin_italy,x="year",y="di01")
+#+end_src
+
+#+RESULTS:
+: <Axes: xlabel='year', ylabel='di01'>
+
+[[file:images/0ee7f5e0849cfb865c4f74a180c09d55409e0749.png]]
+
+#+begin_src python
+from scipy.stats import linregress
+#+end_src
+
+#+begin_src python
+fin_italy[["year","di01"]].describe()
+#+end_src
+
+#+RESULTS:
+:               year       di01
+: count    62.000000  57.000000
+: mean   1990.500000  65.643938
+: std      18.041619  13.908666
+: min    1960.000000  46.931830
+: 25%    1975.250000  54.484480
+: 50%    1990.500000  62.710020
+: 75%    2005.750000  75.462590
+: max    2021.000000  93.921490
+
+<<5b9a5a44-7d96-4fe2-8c3f-f4ca51415e70>>
+We see this dataset does not contain metrics for all years so let's
+remove rows without values
+
+#+begin_src python
+fin_italy_valued = fin_italy.loc[~fin_italy.di01.isna(),["year","di01"]]
+#+end_src
+
+<<6ff95340-57f6-417e-8feb-cb085efcb2e2>>
+Here we see the results of the regression
+
+#+begin_src python
+result = linregress(y=fin_italy_valued.di01,x=fin_italy_valued.year)
+result
+#+end_src
+
+#+RESULTS:
+: LinregressResult(slope=np.float64(0.4768662371619365), intercept=np.float64(-884.1481148904821), rvalue=np.float64(0.5972453694029883), pvalue=np.float64(9.37869396904616e-07), stderr=np.float64(0.08635123015454191), intercept_stderr=np.float64(171.99538887670158))
+
+<<ca4ea1a3-0b1d-4222-b1bf-813f878aa310>>
+The \(R^2\) looks poor:
+
+#+begin_src python
+rsquare = result.rvalue ** 2
+rsquare
+#+end_src
+
+#+RESULTS:
+: np.float64(0.356702031273312)
+
+<<0ada3636-a8e9-45ae-ba7a-132617d16f0d>>
+let's plot the residuals to see any clear behavior
+
+#+begin_src python
+residuals = fin_italy_valued.di01 - (fin_italy_valued.year * result.slope + result.intercept)
+sns.scatterplot(x=fin_italy_valued.year, y=residuals)
+#+end_src
+
+#+RESULTS:
+: <Axes: xlabel='year', ylabel='None'>
+
+[[file:images/548ce9a11737896121e37222ccda2425e1cad98c.png]]
+
+<<bd3afa2e-cfe9-465a-84df-4050fd8eeeb8>>
+*** Adding nonlinear features
+:PROPERTIES:
+:CUSTOM_ID: adding-nonlinear-features
+:END:
+For simplicity of the fit we will use a column with years calculated as
+a difference from the first one.
+
+In this case residuals suggests a kind of oscillatory behavior but this
+is way too complex for this tutorial as it involves the evaluation of
+periods of the oscillations and phase shifts.
+
+The simpler way to increase the fit can be to use a higher degree
+polynomial.
+
+#+begin_src python
+import statsmodels as sm
+from statsmodels.api import formula as smf
+import requests
+import pandas as pd
+#+end_src
+
+#+begin_src python
+fin_italy_valued["dy"] = fin_italy_valued.year - min(fin_italy_valued.year)
+fin_italy_valued["dy2"] = fin_italy_valued.dy ** 2
+fin_italy_valued["dy3"] = fin_italy_valued.dy ** 3
+#+end_src
+
+#+begin_src python
+model = smf.ols("di01 ~ dy + dy2 + dy3",fin_italy_valued)
+regression = model.fit()
+regression.summary()
+#+end_src
+
+#+RESULTS:
+: <class 'statsmodels.iolib.summary.Summary'>
+: """
+:                             OLS Regression Results                            
+: ==============================================================================
+: Dep. Variable:                   di01   R-squared:                       0.598
+: Model:                            OLS   Adj. R-squared:                  0.575
+: Method:                 Least Squares   F-statistic:                     26.30
+: Date:                Sun, 19 Jan 2025   Prob (F-statistic):           1.48e-10
+: Time:                        19:48:07   Log-Likelihood:                -204.44
+: No. Observations:                  57   AIC:                             416.9
+: Df Residuals:                      53   BIC:                             425.1
+: Df Model:                           3                                         
+: Covariance Type:            nonrobust                                         
+: ==============================================================================
+:                  coef    std err          t      P>|t|      [0.025      0.975]
+: ------------------------------------------------------------------------------
+: Intercept     69.6046      4.436     15.690      0.000      60.707      78.503
+: dy            -1.8193      0.670     -2.715      0.009      -3.163      -0.475
+: dy2            0.0614      0.027      2.262      0.028       0.007       0.116
+: dy3           -0.0004      0.000     -1.350      0.183      -0.001       0.000
+: ==============================================================================
+: Omnibus:                        6.613   Durbin-Watson:                   0.134
+: Prob(Omnibus):                  0.037   Jarque-Bera (JB):                3.703
+: Skew:                           0.419   Prob(JB):                        0.157
+: Kurtosis:                       2.075   Cond. No.                     2.84e+05
+: ==============================================================================
+: Notes:
+: [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+: [2] The condition number is large, 2.84e+05. This might indicate that there are
+: strong multicollinearity or other numerical problems.
+: """
+#+begin_src python
+regression.params
+#+end_src
+
+#+RESULTS:
+: Intercept    69.604622
+: dy           -1.819269
+: dy2           0.061431
+: dy3          -0.000417
+: dtype: float64
+#+begin_src python
+fin_italy_valued["predicted"] = regression.params[0] + \
+    regression.params[1] * fin_italy_valued.dy + \
+    regression.params[2] * fin_italy_valued.dy2 + \
+    regression.params[3] * fin_italy_valued.dy3
+#+end_src
+
+#+begin_example
+/tmp/ipykernel_36146/84188653.py:1: FutureWarning: Series.__getitem__ treating keys as positions is deprecated. In a future version, integer keys will always be treated as labels (consistent with DataFrame behavior). To access a value by position, use `ser.iloc[pos]`
+  fin_italy_valued["predicted"] = regression.params[0] + \
+/tmp/ipykernel_36146/84188653.py:2: FutureWarning: Series.__getitem__ treating keys as positions is deprecated. In a future version, integer keys will always be treated as labels (consistent with DataFrame behavior). To access a value by position, use `ser.iloc[pos]`
+  regression.params[1] * fin_italy_valued.dy + \
+/tmp/ipykernel_36146/84188653.py:3: FutureWarning: Series.__getitem__ treating keys as positions is deprecated. In a future version, integer keys will always be treated as labels (consistent with DataFrame behavior). To access a value by position, use `ser.iloc[pos]`
+  regression.params[2] * fin_italy_valued.dy2 + \
+/tmp/ipykernel_36146/84188653.py:4: FutureWarning: Series.__getitem__ treating keys as positions is deprecated. In a future version, integer keys will always be treated as labels (consistent with DataFrame behavior). To access a value by position, use `ser.iloc[pos]`
+  regression.params[3] * fin_italy_valued.dy3
+#+end_example
+
+#+begin_src python
+import matplotlib.pyplot as plt
+#+end_src
+
+#+begin_src python
+fig, ax = plt.subplots(1, 1)
+sns.scatterplot(data=fin_italy_valued,x="year",y="di01", ax=ax)
+sns.lineplot(data=fin_italy_valued,x="year",y="predicted", ax=ax)
+#+end_src
+
+#+RESULTS:
+: <Axes: xlabel='year', ylabel='di01'>
+
+[[file:images/623a675dc051431286d08cc57c923acaf8fce7d0.png]]
+
+<<cb429118-2a73-436a-a4cc-0fb49e4dc10e>>
+The \(R^2\) value improved from .39 to .59
+
+#+begin_src python
+#+end_src
 
 # images/a30a601a27790b4a69e3dda7196cb228ce860a20.png https://noiseonthenet.space/noise/wp-content/uploads/2025/01/a30a601a27790b4a69e3dda7196cb228ce860a20.png
 # images/d1ecfa3b30467fa96fda8febbffe60b0c3718c5a.png https://noiseonthenet.space/noise/wp-content/uploads/2025/01/d1ecfa3b30467fa96fda8febbffe60b0c3718c5a.png
