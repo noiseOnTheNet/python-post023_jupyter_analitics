@@ -1,0 +1,284 @@
+#+BLOG: noise on the net
+#+POSTID: 657
+#+DATE: [2025-02-09 dom 14:54]
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
+#+CATEGORY: Language learning
+#+TAGS: Python
+#+DESCRIPTION: Creating a standalone script from jupyter notebook
+#+PROPERTY: header-args:python  :session *Python* :exports both :results table
+#+TITLE: Coming back down to Earth
+file:images/dylan-de-jonge-9SjCXUq_qSE-unsplash.jpg
+Photo by [[https://unsplash.com/@dylandejonge?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Dylan de Jonge]] on [[https://unsplash.com/photos/brown-pathway-between-green-leaf-plants-9SjCXUq_qSE?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Unsplash]]
+
+
+Our journey in the galaxy of Python analytics started with a [[https://noiseonthenet.space/noise/2025/01/a-trip-to-jupyter-lab/][visit on Jupyter]]
+where we [[https://noiseonthenet.space/noise/2025/01/meet-the-pandas/][met the Pandas]] and started our [[https://noiseonthenet.space/noise/2025/02/data-the-final-frontier/][fearless exploration of data]].
+
+
+It is sometime useful to leave the colorful interactive environment of Jupyter
+to create more prosaic standalone python scripts which are easier to automate or
+included in a larger project.
+
+
+It's time to come back to Earth: this won't be a step back, rather it can be an
+opportunity to start something bigger, like a larger team project or to create
+an application.
+
+
+<<f07e3fcf-15bf-45c9-9e28-b09164509bf2>>
+* Create a Script from a Jupyter Notebook
+:PROPERTIES:
+:CUSTOM_ID: create-a-script-from-a-jupyter-notebook
+:END:
+Sometime it is useful to transform your notebook in an actual script
+e.g.:
+
+- if you want it to be executed automatically (unattended)
+- if you want to create a module out of it in order to use it in a
+  bigger application
+
+<<746e7490-824f-446b-a24d-db6367fdc4fc>>
+** extract code from Jupyter
+:PROPERTIES:
+:CUSTOM_ID: extract-code-from-jupyter
+:END:
+Jupyter has a very wide range of formats to export the content of a
+notebook; some of them are a graphical export (e.g. html or pdf -- this
+requires a latex installation) or textual export (ascii, rtf), etc.
+
+To start creating a python script from your notebook, open it into
+Jupyter, then
+
+1. from the File menu select =save and export notebook as=
+2. from the submenu select =Executable script= this will save a file in
+   your Download directory named with the title of your notebook, but
+   with .py extension
+
+You can now open this file with your favorite code editor; here is what
+you will see:
+
+- before every cell there will be a comment with the cell execution
+  number
+- every code cell will be copied in an individual block of commands
+- markdown cells and raw cells will be presented as comments
+- output will be removed
+
+In the following sections I will list some cleanup actions which will
+help you transform this script into a more manageable piece of code
+
+<<a1cc4dee-702e-4538-ac7b-7a03d2f121f1>>
+** manage magic code
+:PROPERTIES:
+:CUSTOM_ID: manage-magic-code
+:END:
+magic code is translated into the equivalent python call e.g.
+
+#+begin_example
+?sum
+#+end_example
+
+becomes
+
+#+begin_src python :noeval :exports code
+get_ipython().run_line_magic('pinfo', 'sum')
+#+end_src
+
+most of the time you may want to get rid of all of this kind of code as
+some functionalities (e.g. accessing documentation) are intended only
+for interactive usage within a jupyter notebook.
+
+Other functionalities (e.g. timing your cell execution) may be better
+managed with other libraries.
+
+<<268d2832-7730-4cbb-a557-b05ad9ba7ef3>>
+** add code to save tables
+:PROPERTIES:
+:CUSTOM_ID: add-code-to-save-tables
+:END:
+Jupyter conveniently shows pandas =DataFrame=s as tables; you may want
+to extract these results into files.
+
+To access these tables from a script you can save them into files
+
+*** small size
+:PROPERTIES:
+:CUSTOM_ID: small-size
+:END:
+If your table are small you may be willing to save them in some simple
+format:
+
+- csv using
+
+  #+begin_src python :noeval :exports code
+  df.to_csv("my_file.csv")
+  #+end_src
+
+- [[https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_excel.html][Microsoft
+  Excel]] using =openpyxl=
+  [[https://openpyxl.readthedocs.io/en/stable/tutorial.html][optional
+  library]]
+
+  #+begin_src python :noeval :exports code
+  df.to_excel("my_file.xlsx")
+  #+end_src
+
+*** large size
+:PROPERTIES:
+:CUSTOM_ID: large-size
+:END:
+For larger tables or more complex tasks binary formats may help.
+
+- [[https://parquet.apache.org/][Apache Parquet]] is a columnar binary
+  format ideal for large data collections and high performance
+  computation; it requires some optional library e.g.
+  [[https://arrow.apache.org/docs/python/index.html][pyarrow]] see
+  [[https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_parquet.html][documentation]]
+
+  #+begin_src python :noeval :exports code
+  df.to_parquet("my_file.pqt")
+  #+end_src
+
+- [[https://www.hdfgroup.org/solutions/hdf5/][hdf5]] is a binary format
+  which can contain multiple tables in a single file (see
+  [[https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_hdf.html][documentation]] )
+  =python   df.to_hdf("my_file.pqt")=
+
+*** databases
+:PROPERTIES:
+:CUSTOM_ID: databases
+:END:
+Pandas has a simple mapping
+[[https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html][from
+tables to data frames]] which requires
+[[https://docs.sqlalchemy.org/en/20/][sqlalchemy]] and a driver of the
+database. Python basic distribution include
+[[https://docs.python.org/3/library/sqlite3.html][sqlite]] but many more
+are available as optional packages
+=python   df.to_sql(name='my_table', con=engine)=
+
+<<db6ec21b-100b-4ae3-b4d1-250eb58fbd46>>
+** add code to save figures
+:PROPERTIES:
+:CUSTOM_ID: add-code-to-save-figures
+:END:
+the following example works for =matplotlib= and any library based on
+it, like =seaborn=.
+
+#+begin_src python :noeval :exports code
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+california = pd.read_csv("california_pb_2023.csv")
+#+end_src
+
+<<9b7e4eb0-7b3b-46b0-b7db-ff55670bd7ea>>
+The simplest way to save an image is to
+
+1. store the =Axis= object created into some variable
+2. reach the =Figure= object from the =.figure= attribute
+3. use the =.savefig()=
+   [[https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html][method]]
+
+#+begin_src python :noeval :exports code
+ax = sns.histplot(california,x="Daily Mean Pb Concentration")
+ax.figure.savefig("pb_2003.png")
+#+end_src
+
+[[file:images/1e179c2227cfbdf703d241d0bb9385b826510526.png]]
+
+<<a75ae908-cd7f-4340-9b67-893f1d7934eb>>
+A more complex sequence is required when working with
+[[https://matplotlib.org/stable/gallery/subplots_axes_and_figures/subplots_demo.html][multiple
+plots]] either stacked or overlapped.
+
+In this case the =pd.subplot()= function creates multiple charts (axis)
+in a single figure
+
+#+begin_src python :noeval :exports code
+# this code is general: two charts in a single row
+fig, (ax1, ax2) = plt.subplots(1, 2)
+fig.suptitle('Horizontally stacked subplots')
+
+# this code is specific for this function
+from scipy import stats
+stats.probplot(california["Daily Mean Pb Concentration"], plot=ax1)
+stats.probplot(california["Daily Mean Pb Concentration"], plot=ax2,dist=stats.distributions.lognorm(s=1))
+
+fig.savefig("probplots.png")
+#+end_src
+
+[[file:images/0a2e775b9b7dabcdc191e7fcca8c978fccd8992d.png]]
+
+<<f366c8af-a528-41d2-ba15-69e1a2d9f0a3>>
+** clean up the code
+:PROPERTIES:
+:CUSTOM_ID: clean-up-the-code
+:END:
+The following suggestions holds for any python script and are not
+strictly required for the execution.
+
+- move all =import= statements at the beginning of the file
+- organize the code in functions and classes; possibly add type
+  annotations
+- create a single entry point at the bottom of the code with the usual
+  =python   if __name__ == "__main__":       main()=
+- add command line options management using libraries like =optparse=
+  [[https://docs.python.org/3/library/optparse.html][(see here)]]
+- separate data and configuration from code: libraries like =toml=
+  [[https://github.com/uiri/toml][(see here)]] can help reading
+  configuration files
+- transform absolute paths into relative paths
+- consider using pyproject.html to
+  [[https://packaging.python.org/en/latest/guides/writing-pyproject-toml/][collect
+  dependencies and constraints]]
+- consider using a linter (e.g. [[https://www.pylint.org/][pylint]] or
+  [[https://docs.astral.sh/ruff/][ruff]]) to evaluate code
+  inconsistencies
+- create unit tests to verify your functions individually; =pytest=
+  helps in this [[https://docs.pytest.org/en/stable/][task]]
+- add documentation per each function or class as well as a module doc
+  string
+- use a code formatter to keep your style consistent (e.g.
+  [[https://black.readthedocs.io/en/stable/][black]])
+
+<<6c95a4da-6462-4385-8181-2f92c39658da>>
+** add shell script to launch the code
+:PROPERTIES:
+:CUSTOM_ID: add-shell-script-to-launch-the-code
+:END:
+I find it very convenient to have a shell script taking care of
+
+- setting up the working directory of the process properly
+- activate any virtual environment as needed
+- fix the environment variables
+
+e.g.
+
+#+begin_src sh :noeval :exports code
+#!/bin/bash
+
+# change the process directory to this one
+cd $(dirname $0)
+
+# activate a local virtual environment
+source .venv/bin/activate
+
+# set up some environment variables
+export PYTHONPATH=$(pwd)
+
+# launch the application
+# forwards all command line arguments
+python -m myapp $@
+#+end_src
+
+<<f08db391-2f30-4346-a7ee-672668ad2aab>>
+* Exercise
+:PROPERTIES:
+:CUSTOM_ID: exercise
+:END:
+transform the notebook you created and edited in the previous section
+(Exploratory Data Analysis) in an executable script
+
+# images/dylan-de-jonge-9SjCXUq_qSE-unsplash.jpg https://noiseonthenet.space/noise/wp-content/uploads/2025/02/dylan-de-jonge-9SjCXUq_qSE-unsplash.jpg
+# images/1e179c2227cfbdf703d241d0bb9385b826510526.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/1e179c2227cfbdf703d241d0bb9385b826510526-1.png
+# images/0a2e775b9b7dabcdc191e7fcca8c978fccd8992d.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/0a2e775b9b7dabcdc191e7fcca8c978fccd8992d.png

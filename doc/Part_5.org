@@ -10,18 +10,23 @@
 #+PROPERTY: header-args:python :noeval :exports both
 file:images/sam-goodgame-Pe5BC-EDtB4-unsplash.jpg
 Photo by [[https://unsplash.com/@sgoodgame?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Sam Goodgame]] on [[https://unsplash.com/photos/san-francisco-bridge-Pe5BC-EDtB4?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Unsplash]]
+@@html:<br>@@
 
 We made quite a journey so far! Starting from [[https://noiseonthenet.space/noise/2025/01/a-trip-to-jupyter-lab/][Jupyter]] and [[https://noiseonthenet.space/noise/2025/01/meet-the-pandas/][Pandas]] we [[https://noiseonthenet.space/noise/2025/02/data-the-final-frontier/][explored our
 datasets]] and [[https://noiseonthenet.space/noise/2025/02/coming-back-down-to-earth/][created independent scripts]].
+@@html:<br>@@
 
 It is now the time to learn the basics of a very powerful tool: Linear Regression.
+@@html:<br>@@
 
 Linearity is a key concept in mathematics: it goes very far from the naive idea
 of a straight line into more abstract concepts like the independence of two
 effecs into a dynamic system.
+@@html:<br>@@
 
 The jupyter notebooks for this series of posts, the datasets, their source and
 their attribution are available in this [[https://github.com/noiseOnTheNet/python-post023_jupyter_analitics][Github Repo]]
+@@html:<br>@@
 
 <<64909858-2157-4525-b5c0-dc267988e355>>
 * Correlations and linear models
@@ -31,15 +36,23 @@ their attribution are available in this [[https://github.com/noiseOnTheNet/pytho
 A linear model estimate a response from the linear combination of one or
 more inputs
 
-\(y \approx x_1 \alpha_1 + y_2 \alpha_2 + ... + y_n \alpha_n\)
+\begin{equation}
+y \approx x_1 \alpha_1 + y_2 \alpha_2 + ... + y_n \alpha_n
+\end{equation}
 
-\(y \approx \vec{x} \cdot \vec{\alpha}\)
+\begin{equation}
+y \approx \vec{x} \cdot \vec{\alpha}
+\end{equation}
 
 <<552a4ab7-c3f3-4317-86c5-7268e53fae43>>
 given an estimation \(\hat{y} = \vec{x} \cdot \vec{\alpha}\)
 
 we look for the best \(\vec{\alpha}\) which minimize all residuals
-\(\epsilon(\hat{y}) = y - \hat{y}\)
+
+
+\begin{equation}
+\epsilon(\hat{y}) = y - \hat{y}
+\end{equation}
 
 #+begin_src python
 import pandas as pd

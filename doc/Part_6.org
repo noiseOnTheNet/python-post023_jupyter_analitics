@@ -1,0 +1,373 @@
+#+BLOG: noise on the net
+#+POSTID: 691
+#+ORG2BLOG:
+#+DATE: [2025-02-23 dom 20:35]
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
+#+CATEGORY: Language learning
+#+TAGS: Python
+#+DESCRIPTION: introduction to statistical tests in Python
+#+TITLE: Take the (statistical) Test
+#+PROPERTY: header-args:python :noeval :exports both
+file:images/braden-collum-9HI8UJMSdZA-unsplash.jpg
+Photo by [[https://unsplash.com/@bradencollum?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Braden Collum]] on [[https://unsplash.com/photos/man-on-running-field-9HI8UJMSdZA?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash][Unsplash]]
+@@html:<br>@@
+
+Our trip is finally closing: we visited [[https://noiseonthenet.space/noise/2025/01/a-trip-to-jupyter-lab/][Jupyter]], met [[https://noiseonthenet.space/noise/2025/01/meet-the-pandas/][Pandas]], [[https://noiseonthenet.space/noise/2025/02/data-the-final-frontier/][explored our datasets]], [[https://noiseonthenet.space/noise/2025/02/coming-back-down-to-earth/][created independent scripts]] and introduced [[https://noiseonthenet.space/noise/2025/02/hold-the-line/][linear regression]].
+@@html:<br>@@
+
+Now is the time to introduce a few statistical tests
+@@html:<br>@@
+
+The jupyter notebooks for this series of posts, the datasets, their source and
+their attribution are available in this [[https://github.com/noiseOnTheNet/python-post023_jupyter_analitics][Github Repo]]
+@@html:<br>@@
+
+<<cb9a9ed8-4442-4d67-ba38-d634abb2e7be>>
+* Statistical Tests Intro
+:PROPERTIES:
+:CUSTOM_ID: statistical-tests-intro
+:END:
+The purpose of this section is merely to introduce a couple of the most
+common statistical test.
+
+There is no attempt to give a complete statistical background; there is
+no attempt to give any complete list of available tests.
+
+The main purpose is to illustrate a typical usage of some of the most
+common python libraries when performing some more complex analysis.
+
+The reader is invited to study the statistical theory before using any
+test in order to familiarize with names, objectives and common pitfalls.
+
+<<abf37359-764d-47ef-b948-2c90fe8afbcc>>
+** Bivariate Student's T test
+:PROPERTIES:
+:CUSTOM_ID: bivariate-students-t-test
+:END:
+We may want to verify if two sample datasets may be coming from the same
+distribution or different ones, i.e. they are not very different or they
+are different enough.
+
+This test makes some assumptions (e.g. the distribution is normal etc.)
+please [[https://en.wikipedia.org/wiki/Student's_t-test][check the
+details]] before using this test
+
+This test's hypothesis are the following:
+
+- H0 (base hypothesis) both datasets are coming from a sampling of the
+  same distribution
+- H1 (alternative hypothesis) the datasets may have been sampled out of
+  different distributions
+
+In this example we are going to compare the distribution of temperatures
+measured in Rome in June 1951 with the those measured in June 2009 and
+try to see if there is any meaningful shift
+
+#+begin_src python
+import pandas as pd
+import seaborn as sns
+import scipy.stats
+from scipy.stats import ttest_ind
+#+end_src
+
+<<b41b448e-80db-479f-bc76-b50c57c4f80d>>
+read daily temperatures measured in Rome from 1951 to 2009
+
+This is the content:
+| column | meaning                            |
+|--------+------------------------------------|
+| SOUID  | categorical: measurement source id |
+| DATE   | calendar day in YYYYMMDD format    |
+| TG     | average temperature                |
+| Q_TG   | categorical: quality tag 9=invalid |
+
+#+begin_src python
+roma = pd.read_csv("TG_SOUID100860.txt",skiprows=20)
+#+end_src
+
+<<50b4f48d-f7f4-4180-9f24-46f0cf67f55a>>
+This dataset column names include spaces, we need to remove them
+
+#+begin_src python
+roma.columns = list(map(str.strip,roma.columns))
+#+end_src
+
+#+begin_src python
+roma.columns
+#+end_src
+
+#+RESULTS:
+: Index(['SOUID', 'DATE', 'TG', 'Q_TG'], dtype='object')
+
+<<8f6fb10a-15d5-42fb-963f-e893fcde1c87>>
+let's parse the DATE field into a pandas date series
+
+#+begin_src python
+roma.DATE = pd.to_datetime(roma.DATE,format="%Y%m%d")
+#+end_src
+
+<<9b706fca-709f-4f34-acfa-39860243312e>>
+We can now safely extract month and year
+
+#+begin_src python
+roma["MONTH"] = roma.DATE.dt.month
+#+end_src
+
+#+begin_src python
+roma["YEAR"] = roma.DATE.dt.year
+#+end_src
+
+<<f11851da-5669-40cc-bed4-50600dc1dfb4>>
+Let's clean the dataset from invalid measurements
+
+#+begin_src python
+roma_cleaned = roma.loc[roma.Q_TG != 9,:]
+#+end_src
+
+<<56421ef1-6664-483d-88b4-a1f01de0f5bd>>
+Now I will extract the two datasets to compare
+
+#+begin_src python
+roma_giugno_1951 = roma_cleaned.loc[
+    (roma_cleaned.YEAR == 1951) & (roma_cleaned.MONTH == 6),
+    "TG"
+]
+#+end_src
+
+#+begin_src python
+roma_giugno_2009 = roma_cleaned.loc[
+    (roma_cleaned.YEAR == 2009) & (roma_cleaned.MONTH == 6),
+    "TG"
+]
+#+end_src
+
+<<02096a7f-d749-4a92-be93-4a1b01a05d17>>
+Let's apply the test on them
+
+#+begin_src python
+ttest_ind(roma_giugno_1951,roma_giugno_2009)
+#+end_src
+
+#+RESULTS:
+: TtestResult(statistic=np.float64(-2.167425930725216), pvalue=np.float64(0.03432071944797424), df=np.float64(58.0))
+
+<<35d9ba7c-a32b-4bb4-bc49-bc76f7c51a19>>
+p-value is about 3% this is not a scientific proof of temperature shift
+but some more investigations may be worth
+
+#+begin_src python
+roma_giugno= roma_cleaned.loc[
+    ((roma_cleaned.YEAR == 2009) |
+     (roma_cleaned.YEAR == 1951)) & 
+    (roma_cleaned.MONTH == 6)
+]
+sns.kdeplot(data=roma_giugno,x="TG",hue="YEAR")
+#+end_src
+
+#+RESULTS:
+: <Axes: xlabel='TG', ylabel='Density'>
+
+[[file:images/8c91e89018e367dc62c1159410beb26224b590c1.png]]
+
+<<5a9ffcf3-d9a9-4f29-a363-fccda6ba3500>>
+** ANalyisis Of VAriance
+:PROPERTIES:
+:CUSTOM_ID: analyisis-of-variance
+:END:
+[[https://en.wikipedia.org/wiki/Analysis_of_variance][Analysis of
+Variance]] is a family of methodologies that extend Student's T to more
+than two groups; their goal is to prove whether a factor makes a
+difference when it splits a set of measurements.
+
+It can be used to show if a disease treatment is effective or not. The
+factor or categorical independend variable is the "input", while the
+health parameter is a continuous dependent variable or "output".
+
+We are going to show the simplest use of it called =Fixed Mixture=
+
+In our exercise we are going to show the relevance of geography, year or
+gender respect to the unemployment in Italy for people between 15 and 24
+
+#+begin_src python
+unemployment = pd.read_csv(
+    "unemployment_it.csv",
+    dtype={
+        "Gender":"category",
+        "Area":"category",
+        "Age":"category",
+    }
+)
+unemployment.columns
+#+end_src
+
+#+RESULTS:
+: Index(['Age', 'Gender', 'Area', 'Frequency', 'Year', 'Rate'], dtype='object')
+#+begin_src python
+unemployment.Gender.unique()
+#+end_src
+
+#+RESULTS:
+: ['Male', 'Female']
+: Categories (2, object): ['Female', 'Male']
+#+begin_src python
+unemployment.Area.unique()
+#+end_src
+
+#+RESULTS:
+: ['North', 'North-west', 'North-east', 'Center', 'South']
+: Categories (5, object): ['Center', 'North', 'North-east', 'North-west', 'South']
+#+begin_src python
+import statsmodels.api as sm
+#+end_src
+
+#+begin_src python
+from statsmodels.formula.api import ols
+#+end_src
+
+<<fdad3783-2bbb-4548-9f93-e8f40a1e20db>>
+Using * in the formula is adding interaction between factor in the
+analysis
+
+#+begin_src python
+model = ols('Rate ~ Gender * Area * Year', data=unemployment).fit()
+#+end_src
+
+#+begin_src python
+table = sm.stats.anova_lm(model, typ=2)
+#+end_src
+
+#+begin_src python
+print(table)
+#+end_src
+
+#+begin_example
+                        sum_sq     df           F        PR(>F)
+Gender             1285.245000    1.0   31.770447  6.601688e-08
+Area              18194.797505    4.0  112.440984  7.299258e-48
+Gender:Area          93.451500    4.0    0.577516  6.793006e-01
+Year               1134.738195    1.0   28.050014  3.420439e-07
+Gender:Year          20.187814    1.0    0.499030  4.808400e-01
+Area:Year            15.967523    4.0    0.098677  9.827658e-01
+Gender:Area:Year     40.068551    4.0    0.247617  9.108217e-01
+Residual           7281.738917  180.0         NaN           NaN
+#+end_example
+
+<<4183b7c4-d72d-46bb-b507-2272c0af509c>>
+The geographical area looks very important respect to the others: the F
+score is much higher and the p-value is way smaller than any other
+contributor
+
+#+begin_src python
+import seaborn as sns
+#+end_src
+
+#+begin_src python
+sns.kdeplot(data=unemployment,x="Rate",hue="Gender")
+#+end_src
+
+#+RESULTS:
+: <Axes: xlabel='Rate', ylabel='Density'>
+
+[[file:images/c7ada1736dbf4722b2fa90f9ef94c54745c2d195.png]]
+
+#+begin_src python
+sns.kdeplot(data=unemployment,x="Rate",hue="Area")
+#+end_src
+
+#+RESULTS:
+: <Axes: xlabel='Rate', ylabel='Density'>
+
+[[file:images/db12fe102f3d876ae4edd889dc54e05bf5a3dafc.png]]
+
+<<49b93b02-3789-41b3-be72-4617dcd097fe>>
+Many examples are available on the internet, e.g.
+[[https://github.com/KenDaupsey/One-Way-Repeated-measures-ANOVA/blob/main/One_Way_Repeated_measures_ANOVA.ipynb][this
+one]]
+
+<<957597eb-dfab-4d89-9def-cb1a4465545a>>
+*** (Optional) How it works
+:PROPERTIES:
+:CUSTOM_ID: optional-how-it-works
+:END:
+The main idea is to see how a grouping is or not relevant to explain the
+global variance
+
+In order to understand this test we can derive a formula representing
+the contribution to the global variance given by each the variance
+within each subgroup and the variance between all subgroups
+
+Let's start with the usual variance definition
+
+\begin{equation} var[X] := \frac{\sum_{x \in X}{(x - \bar{x})^2}}{n - 1}
+\end{equation}
+
+where \(\bar{x} = E[X] = \frac{\sum_{x \in X}x}{card[X]}\)
+
+given a partition \(X_i\) i.e. \(\bigcup_{i \in G}{X_i} =  X\) and
+\(n = card[X]\) ; \(n_i = card[X_i]\) ;
+
+so \(\bar{x_i} = E[X_i] = \frac{\sum_{x \in X_i}x}{n_i}\)
+
+breaking the sum into each subgroup and adding and removing \(x_i\)
+inside the square we have
+
+\begin{equation} var[X] := \frac{\sum_{i \in G}{\sum_{x \in X_i}(x -
+\bar{x} + \bar{x_i} - \bar{x_i})^2}}{n - 1} \end{equation}
+
+developing the square
+
+\begin{equation} var[X] := \frac{\sum_{i \in G}{\sum_{x \in X_i}(x -
+\bar{x_i})^2 + (\bar{x_i} - \bar{x})^2 -2(x - \bar{x_i})(\bar{x_i} -
+\bar{x})}}{n - 1} \end{equation}
+
+we can bring the constant part outside of the sum
+
+\begin{equation} var[X] := \frac{\sum_{i \in G}{( n_i (\bar{x_i} -
+\bar{x})^2 + \sum_{x \in X_i}(x - \bar{x_i})^2 -2(\bar{x_i} -
+\bar{x})\sum_{x \in X_i}{(x - \bar{x_i})}})}{n - 1} \end{equation}
+
+by definition of \(\bar{x_i}\) we have
+
+\begin{equation} \forall_{i \in G}\sum_{x \in X_i}{(x - \bar{x_i})} = 0
+\end{equation}
+
+so the last addend can be simplified; let's break the fraction
+
+\begin{equation} var[X] := \frac{\sum_{i \in G}{ n_i (\bar{x_i} -
+\bar{x})^2 }}{n - 1} + \frac{\sum_{i \in G}{\sum_{x \in X_i}(x -
+\bar{x_i})^2}}{n - 1} \end{equation}
+
+now we multiply and divide the second part by \(n_i - 1\) in order to
+show how it may be seen as a variance
+
+\begin{equation} var[X] := \frac{\sum_{i \in G}{ n_i (\bar{x_i} -
+\bar{x})^2 }}{n - 1} + \sum_{i \in G}{\frac{(n_i - 1)}{n
+-1}\frac{\sum_{x \in X_i}(x - \bar{x_i})^2}{n_i - 1}} \end{equation}
+
+now we can show the variance of each subgroup
+
+\begin{equation} var[X] := \frac{\sum_{i \in G}{ n_i (\bar{x_i} -
+\bar{x})^2 }}{n - 1} + \sum_{i \in G}{\frac{(n_i - 1)}{n -1}var[X_i]}
+\end{equation}
+
+both addends are weighted; this is equivalent to
+
+\begin{equation} var[X] := var[E[X_i]] + E[var[X_i]] \end{equation}
+
+<<a241ef16-a115-46e5-8748-b42fa2522f3a>>
+we can rewrite it by using the "variance within groups" and "variance
+between groups" usual names
+
+\begin{equation} var[X] = var_{between} + var_{within} \end{equation}
+
+The F-Score is calculated as the ratio of these two components:
+
+\begin{equation} F := var_{within} / var_{between} \end{equation}
+
+#+begin_src python
+#+end_src
+
+# images/braden-collum-9HI8UJMSdZA-unsplash.jpg https://noiseonthenet.space/noise/wp-content/uploads/2025/02/braden-collum-9HI8UJMSdZA-unsplash.jpg
+# images/8c91e89018e367dc62c1159410beb26224b590c1.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/8c91e89018e367dc62c1159410beb26224b590c1.png
+# images/c7ada1736dbf4722b2fa90f9ef94c54745c2d195.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/c7ada1736dbf4722b2fa90f9ef94c54745c2d195.png
+# images/db12fe102f3d876ae4edd889dc54e05bf5a3dafc.png https://noiseonthenet.space/noise/wp-content/uploads/2025/02/db12fe102f3d876ae4edd889dc54e05bf5a3dafc.png
